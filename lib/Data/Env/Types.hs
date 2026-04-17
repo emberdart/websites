@@ -10,6 +10,7 @@ import Control.Exception.MissingAtomURIException
 import Control.Lens
 import Control.Monad.Error.Class
 import Control.Monad.Reader
+import Data.Function
 import Data.List.NonEmpty     (NonEmpty)
 import Data.List.NonEmpty     qualified as LNE
 import Data.Set               (Set)
@@ -31,13 +32,13 @@ data SiteType = Normal | Blog {
 makeLenses ''SiteType
 
 data Urls = Urls {
-    _urlDanDart      :: URI,
+    _urlPersonal      :: URI,
     _urlHamRadio     :: URI,
     _urlBlogHamRadio :: URI,
-    _urlBlog         :: URI,
-    _urlBlogJolHarg  :: URI,
-    _urlJolHarg      :: URI,
-    _urlMadHacker    :: URI
+    _urlBlogPersonal         :: URI,
+    _urlBlogTech  :: URI,
+    _urlPortfolio      :: URI,
+    _urlReviews    :: URI
 }
 
 makeLenses ''Urls
@@ -102,10 +103,11 @@ addBreadcrumb breadcrumb' page = do
     let firstText = fst $ LNE.head (getBreadcrumb breadcrumbExisting)
     local (set breadcrumb (Breadcrumb [(firstText, Just baseUrl'), (breadcrumb', Nothing)])) page
 
+-- todo "on"
 instance Eq Website where
-    Website {_slug = slug1} == Website {_slug = slug2} = slug1 == slug2
+    (==) = (==) `on` view slug
 
 instance Ord Website where
-    compare Website {_slug = slug1} Website {_slug = slug2} = compare slug1 slug2
+    compare = compare `on` view slug
 
 type Env = Set Website

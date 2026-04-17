@@ -25,5 +25,5 @@ commonCSS = do
     css "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
     css "https://fonts.googleapis.com/css?family=Caudex"
     css "https://fonts.googleapis.com/css?family=Lexend+Deca"
-    css "/css/jolharg-theme.css"
+    css "/css/portfolio-theme.css"
     css "/css/style.css"

@@ -56,6 +56,49 @@ groupByMany postToTags posts = MNE.unsafeFromMap $
     M.empty
     posts
 
+{- Make a graph of connectivity.
+  e.g. [[a, b, c, d], [b, c, e, g], [a, c, e]] ->
+      {
+        a: { b: 1, c: 2, d: 1, e: 1 },
+        b: { a: 1, c: 2, d: 1, e: 1, g: 1 },
+        c: { a: 2, b: 2, d: 1, e: 2, g: 1 },
+        d: { a: 1, b: 1, c: 1 },
+        e: { a: 1, b: 1, c: 2, g: 1},
+        g: { b: 1, c: 1, e: 1 }
+      }
+  then you rabot (filter) for x>1
+      {
+        a: { c: 2 },
+        b: { c: 2 },
+        c: { a: 2, b: 2, e: 2 },
+        e: { c: 2 },
+      }
+  Then you can see clearly that since everything = 2, a, b and e are pretty obvious subsets of c!
+-}
+
+{-
+filterGraph :: (v -> Bool) -> M.Map k (M.Map k v) -> M.Map k (M.Map k v)
+filterGraph pred map = undefined
+
+-- Doesn't necessarily lead to any commonalities so we can't return NEMap
+filterNEGraph :: (v -> Bool) -> MNE.NEMap k (MNE.NEMap k v) -> M.Map k (M.Map a v)
+filterNEGraph pred map = undefined
+
+connectivity :: Foldable t => t (t a) -> M.Map a (M.Map a Int)
+connectivity xss = undefined
+
+connectivityNE :: Foldable t => t (t a) -> MNE.NEMap a (MNE.NEMap a Int)
+connectivityNE xss = MNE.unsafeFromMap $ foldr' (
+    \tagsForOnePost mapSoFar -> 
+      -- Now for each of the tags, we must add it to the map if it's not there as empty...
+      -- and also add all the tags used in this post to the set under each.
+      undefined {-}
+      foldr' (
+          \tag setSoFar -> undefined
+      )-}
+  ) M.empty xss
+-}
+
 build ∷ (MonadReader Website m, MonadError MissingAtomURIException m, MonadIO m) ⇒ (Html → Html → Html → m Html) → m Html → m ()
 build page page404 = do
   baseUrl' <- view baseUrl
@@ -78,6 +121,37 @@ build page page404 = do
   let grouped = groupByMany (SNE.fromList . BlogTypes.tags . BlogTypes.metadata) sortedPosts :: NEMap BlogTypes.BlogTag (NonEmpty BlogTypes.BlogPost)
   let tags = MNE.keys grouped
 
+  -- Also find commonalities between tags
+  let _tagsGroupedByPost :: NonEmpty (NonEmpty BlogTypes.BlogTag) = fmap (BlogTypes.tags . BlogTypes.metadata) sortedPosts
+
+  -- For implication, add every tag in the sub list to a new map where it adds one each time it sees everything
+  -- much like frequency, but for frequency "per" tag shared
+  -- then throw away the hardly shared ones!
+
+  -- let implicator :: NEMap BlogTypes.BlogTag (NEMap BlogTypes.BlogTag Int) = MNE.unsafeFromMap . foldr' (
+  --         \tag map' -> M.insertWith (\new old -> M.insertWith (\))
+  --       ) M.empty
+
+  -- let freqsOf :: NonEmpty BlogTypes.BlogTag -> NEMap BlogTypes.BlogTag Int = MNE.unsafeFromMap . foldr' (
+  --         \tag map' -> M.insertWith (+) tag 1 map'
+  --       ) M.empty
+-- 
+  -- -- Find the frequency of each tag so we can link it in, and sort by frequency, then implication.
+  -- let frequency :: MNE.NEMap BlogTypes.BlogTag Int = freqsOf $ join tagsGroupedByPost
+-- 
+  -- let freqsSorted :: [(BlogTypes.BlogTag, Int)] = LNE.filter ((> 1) . snd) . LNE.reverse . LNE.sortOn snd $ MNE.toList frequency
+
+  -- liftIO $ print freqsSorted
+
+  -- Highest freqs
+
+
+
+  -- go through each post and add a tag for each other tag. If there are more than one tag for another tag this means something.
+  -- Probably means implication if x<y, equality if x = y, reverse implication if x>y.
+
+  let _commonalities :: MNE.NEMap BlogTypes.BlogTag (MNE.NEMap BlogTypes.BlogTag Int) = undefined
+  
   -- pretty sus of this
   tagUrlDates <- MNE.elems <$> MNE.traverseWithKey (\tag posts -> do
     -- Okay LNE.filter does not have this guarantee - anything else?
