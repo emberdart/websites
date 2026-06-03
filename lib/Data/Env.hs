@@ -322,7 +322,7 @@ prodHamRadio = Website {
         "qrz"
         ]
     -}
-    _description = NE.trustedNonEmpty "The M0ORI callsign is owned by Ember Dart located in England. He works on HF and VHF in Exmouth.",
+    _description = NE.trustedNonEmpty "The M0ORI callsign is owned by Ember Dart located in England. She works on HF and VHF in Exeter.",
     _previewImgUrl = [relativeReference|/img/preview.png|],
     _baseUrl = productionUrls ^. urlHamRadio,
     _pageUrl = productionUrls ^. urlHamRadio,

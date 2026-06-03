@@ -14,7 +14,7 @@ pageHamRadio ∷ MonadReader Website m ⇒ m Html
 pageHamRadio = plainBreadcrumb (NE.trustedNonEmpty "Ham Radio") . makePage "ham" "Ham Radio" defaultLayout defaultPage $ do
     p "I am a UK full-licenced radio amateur, and have been issued the callsign HamRadio."
     p $ do
-        "My nearest radio club is Exmouth Amateur HamRadio Club, but they don't seem to have a website. As far as I have been made aware, they meet on the third Wednesday of the month in Marpool Hill Scout Headquarters at 19:30, although I personally cannot attend for mobility and caring reasons."
+        "My nearest radio club is Exeter Amateur Radio Society."
     p $ do
         "I work on a "
         extLink "https://www.baofengradio.co.uk/uv-5r-black-vhf-uhf/" "Baofeng UV-5R"
