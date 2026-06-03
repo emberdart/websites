@@ -1,21 +1,30 @@
-[submodule ".sites/personal"]
-	path = .sites/personal
-	url = git@github.com:danwdart/dandart.git
-[submodule ".sites/portfolio"]
-	path = .sites/portfolio
-	url = git@github.com:JolHarg/jolharg.git
-[submodule ".sites/hamradio"]
-	path = .sites/hamradio
-	url = git@github.com:danwdart/m0ori.git
-[submodule ".sites/blogpersonal"]
-	path = .sites/blogpersonal
-	url = git@github.com:danwdart/blog.git
-[submodule ".sites/reviews"]
-	path = .sites/reviews
-	url = git@github.com:danwdart/madhacker.git
-[submodule ".sites/blogtech"]
-	path = .sites/blogtech
-	url = git@github.com:JolHarg/blog.git
 [submodule ".sites/bloghamradio"]
 	path = .sites/bloghamradio
-	url = git@github.com:danwdart/blogm0ori.git
+	url = git@github.com:emberdart/bloghamradio.git
+[submodule ".sites/personal"]
+	path = .sites/personal
+	url = git@github.com:emberdart/personal.git
+[submodule ".sites/blog"]
+	path = .sites/blog
+	url = git@github.com:emberdart/blog.git
+[submodule ".sites/blogpersonal"]
+	path = .sites/blogpersonal
+	url = git@github.com:emberdart/blogpersonal.git
+[submodule ".sites/hamradio"]
+	path = .sites/hamradio
+	url = git@github.com:emberdart/hamradio.git
+[submodule ".sites/reviews"]
+	path = .sites/reviews
+	url = git@github.com:emberdart/reviews.git
+[submodule ".sites/portfolio"]
+	path = .sites/portfolio
+	url = git@github.com:JolHarg/portfolio.git
+[submodule ".sites/blogtech"]
+	path = .sites/blogtech
+	url = git@github.com:JolHarg/blogtech.git
+[submodule ".sites/blogdead"]
+	path = .sites/blogdead
+	url = git@github.com:emberdart/blogdead.git
+[submodule ".sites/deadsite"]
+	path = .sites/deadsite
+	url = git@github.com:emberdart/deadsite.git
