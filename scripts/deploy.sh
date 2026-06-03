@@ -17,6 +17,7 @@ cabal new-run build
 cd .sites
 for site in */
 do
+    echo "$site"
     cd "$site"
     siteupdate
     cd ..

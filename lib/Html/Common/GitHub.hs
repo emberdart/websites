@@ -86,6 +86,7 @@ instance FromJSON Language where
     parseJSON (String "C") = pure LangC
     parseJSON (String "CoffeeScript") = pure LangCoffee
     parseJSON (String "C++") = pure LangCPP
+    parseJSON (String "CSS") = pure LangHTML
     parseJSON (String "Dockerfile") = pure LangDocker
     parseJSON (String "JavaScript") = pure LangJS
     parseJSON (String "Vue") = pure LangJS
