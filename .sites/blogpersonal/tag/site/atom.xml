@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?><feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Posts tagged with site: Ember Dart's Blog: Software, Mathematics, HamRadio, Music</title><id>https://blog.emberdart.co.uk/atom.xml</id><updated>2020-12-04 00:01:00 UTC</updated><link href="https://blog.emberdart.co.uk/tag/site"/><entry><id>new-review-site</id><title type="text">New Review Site</title><updated>2020-12-04 00:01:00 UTC</updated><author><name>Ember Dart</name></author><content type="html">&lt;p&gt;Hey folks,&lt;/p&gt;
+&lt;p&gt;I've been working on making a new review site, and have a first review up now.&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://madhackerreviews.com"&gt;Here's the site&lt;/a&gt; and &lt;a href="https://madhackerreviews.com/atom.xml"&gt;Here's the feed&lt;/a&gt;!&lt;/p&gt;
+&lt;p&gt;Hope you like it.&lt;/p&gt;</content><link href="https://blog.emberdart.co.uk/post/2020/12/new-review-site"/></entry></feed>

@@ -7,9 +7,6 @@
 [submodule ".sites/blog"]
 	path = .sites/blog
 	url = git@github.com:emberdart/blog.git
-[submodule ".sites/blogpersonal"]
-	path = .sites/blogpersonal
-	url = git@github.com:emberdart/blogpersonal.git
 [submodule ".sites/hamradio"]
 	path = .sites/hamradio
 	url = git@github.com:emberdart/hamradio.git

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Posts tagged with google: Ember Dart's Blog: Software, Mathematics, HamRadio, Music</title><id>https://blog.emberdart.co.uk/atom.xml</id><updated>2016-10-19 19:45:00 UTC</updated><link href="https://blog.emberdart.co.uk/tag/google"/><entry><id>youre-doing-it-wrong-how-to-report-bug</id><title type="text">You're Doing It Wrong: How to report a bug</title><updated>2016-10-19 19:45:00 UTC</updated><author><name>Ember Dart</name></author><content type="html">&lt;p&gt;[Taken from a Google+ post]&lt;/p&gt;
+&lt;p&gt;Many support requests don't contain critical information needed to actually support.&lt;/p&gt;
+&lt;p&gt;Learn how to ask for help by following these instructions:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Make sure all attachments and power are double checked to be secure connections&lt;/li&gt;
+&lt;li&gt;Look for an error message&lt;/li&gt;
+&lt;li&gt;Google the error message&lt;/li&gt;
+&lt;li&gt;Submit your question along with any error related output, custom settings and most importantly steps to reproduce.&lt;/li&gt;
+&lt;li&gt;Wait.&lt;/li&gt;
+&lt;li&gt;Don't pester.&lt;/li&gt;
+&lt;li&gt;Learn English, it's a lot better if you use proper grammar so that people will understand your problem.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Wrong&lt;/strong&gt;: Help!!! My Linux doesn't want print! I need have my no.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Right&lt;/strong&gt;: My brand x model y printer refuses to print on the grounds that I get the coloured light z and my distribution Q tells me that the reason is W when I try to G and then H. Can somebody suggest what steps I should take to resolve this?&lt;/p&gt;
+&lt;p&gt;This information has been brought to you by the society of programmers who wish people would learn to report bugs properly.&lt;/p&gt;</content><link href="https://blog.emberdart.co.uk/post/2016/10/youre-doing-it-wrong-how-to-report-bug"/></entry></feed>
