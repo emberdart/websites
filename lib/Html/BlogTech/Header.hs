@@ -17,7 +17,7 @@ htmlHeader blogPostLinks blogTagLinks blogPosts = do
     urlPortfolio' <- view $ urls . urlPortfolio
     pageBlog' <- pageBlog blogPostLinks blogTagLinks blogPosts
     atomXml' <- view $ siteType . atomUrl . to show
-    pure . makeHeader "/#blog" "Portfolio Blog" mempty $ do
+    pure . makeHeader "/#blog" "Blog" mempty $ do
         extNav (stringValue $ show urlPortfolio') "Portfolio"
         pageBlog'
         dlNav (toValue atomXml') "Atom Feed"
