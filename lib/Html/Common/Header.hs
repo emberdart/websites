@@ -25,5 +25,5 @@ makeHeader mainLink title' extraHeaderContent content' = do
             H.div ! class_ "col" $ do
                 ul ! class_ "navbar-nav px-3" $ content'
                 extraHeaderContent)
-    img ! src "https://ipv4.games/claim?name=dandart.co.uk" ! A.style "height:0;width:0;"
-    img ! src "https://ipv4.quest/claim?name=dandart.co.uk" ! A.style "height:0;width:0;"
+    img ! src "https://ipv4.games/claim?name=emberdart.co.uk" ! A.style "height:0;width:0;"
+    img ! src "https://ipv4.quest/claim?name=emberdart.co.uk" ! A.style "height:0;width:0;"

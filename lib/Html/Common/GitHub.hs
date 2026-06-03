@@ -50,12 +50,12 @@ languageToURI = \case
     LangDocker -> [relativeReference|/img/docker-mark-blue.svg|]
     LangGeneric -> [uri|https://web.archive.org/web/20181125122112if_/https://upload.wikimedia.org/wikipedia/commons/1/1a/Code.jpg|]
     LangHS -> [uri|https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Haskell-Logo.svg/1280px-Haskell-Logo.svg.png|]
-    LangHTML -> [uri|https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/HTML5_logo_and_wordmark.svg/512px-HTML5_logo_and_wordmark.svg.png|]
+    LangHTML -> [uri|https://upload.wikimedia.org/wikipedia/commons/6/61/HTML5_logo_and_wordmark.svg|]
     LangJS -> [uri|https://upload.wikimedia.org/wikipedia/commons/6/6a/JavaScript-logo.png|]
     LangNix -> [uri|https://raw.githubusercontent.com/NixOS/nixos-artwork/refs/heads/master/logo/nix-snowflake-colours.svg|]
-    LangPHP -> [uri|https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/PHP-logo.svg/711px-PHP-logo.svg.png|]
+    LangPHP -> [uri|https://www.php.net/images/logos/new-php-logo.svg|]
     LangPython -> [uri|https://upload.wikimedia.org/wikipedia/commons/0/0a/Python.svg|]
-    LangShell -> [uri|https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Antu_bash.svg/512px-Antu_bash.svg.png|]
+    LangShell -> [uri|https://bashlogo.com/img/symbol/svg/monochrome_dark.svg|]
     LangTcl -> [uri|https://upload.wikimedia.org/wikipedia/commons/4/41/Tcl.svg|]
     LangTS -> [uri|https://rynop.files.wordpress.com/2016/09/ts.png?w=200|]
     LangVB -> [uri|https://upload.wikimedia.org/wikipedia/en/e/e4/Visual_Basic_6.0_logo.png|]
@@ -185,7 +185,7 @@ getRepos user = do
         "sort" =: ("pushed" :: Text) <> -- can't sort by stars
         "type" =: ("owner" :: Text) <>
         "direction" =: ("desc" :: Text) <>
-        header "User-Agent" "Dan's Haskell Bot" <>
+        header "User-Agent" "Ember's Haskell Bot" <>
         header "Authorization" (TE.encodeUtf8 . T.pack $ "Bearer " <> githubAccessToken)
         )
     pure $ responseBody res

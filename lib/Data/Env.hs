@@ -22,10 +22,10 @@ import Text.Email.QuasiQuotation qualified as QE
 
 productionUrls ∷ Urls
 productionUrls = Urls {
-    _urlPersonal = [uri|https://dandart.co.uk|],
+    _urlPersonal = [uri|https://emberdart.co.uk|],
     _urlHamRadio = [uri|https://m0ori.com|],
     _urlBlogHamRadio = [uri|https://blog.m0ori.com|],
-    _urlBlogPersonal = [uri|https://blog.dandart.co.uk|],
+    _urlBlogPersonal = [uri|https://blog.emberdart.co.uk|],
     _urlBlogTech = [uri|https://blog.jolharg.com|],
     _urlPortfolio = [uri|https://jolharg.com|],
     _urlReviews = [uri|https://madhackerreviews.com|]
@@ -40,14 +40,14 @@ prodBlogPersonal,
     prodReviews ∷ Website
 prodBlogPersonal = Website {
     _slug = NE.trustedNonEmpty "blogpersonal",
-    _title = NE.trustedNonEmpty "Dan Dart's Blog: Software, Mathematics, HamRadio, Music",
+    _redirectSlugs = [NE.trustedNonEmpty "blogdead"],
+    _title = NE.trustedNonEmpty "Ember Dart's Blog: Software, Mathematics, HamRadio, Music",
     {- _keywords = [
         "dan",
         "dart",
         "dandart",
-        "daniel dart",
+        "ember dart",
         "dan dart",
-        "exmouth",
         "exeter",
         "devon",
         "england",
@@ -82,7 +82,7 @@ prodBlogPersonal = Website {
         "ubuntu",
         "debian"
         ],-}
-    _description = NE.trustedNonEmpty "The blog of Dan Dart. Includes life-changing observations and scientific breakthroughs, as well as interesting content from around the world.",
+    _description = NE.trustedNonEmpty "The blog of Ember Dart. Includes life-changing observations and scientific breakthroughs, as well as interesting content from around the world.",
     _previewImgUrl = [relativeReference|/img/preview.png|],
     _baseUrl = productionUrls ^. urlBlogPersonal,
     _pageUrl = productionUrls ^. urlBlogPersonal,
@@ -90,25 +90,25 @@ prodBlogPersonal = Website {
     _urls = productionUrls,
     _breadcrumb = Breadcrumb [(NE.trustedNonEmpty "Blog", Nothing)],
     _siteType = Blog {
-        _atomTitle = NE.trustedNonEmpty "Dan Dart's Blog: Software, Maths, HamRadio, Music",
+        _atomTitle = NE.trustedNonEmpty "Ember Dart's Blog: Software, Maths, HamRadio, Music",
         _atomUrl = [relativeReference|/atom.xml|],
         _renderSuffix = mempty
     },
-    _email = [QE.email|blog@dandart.co.uk|],
+    _email = [QE.email|blog@emberdart.co.uk|],
     _openGraphInfo = OGWebsite,
     _livereload = False,
     _build = Blog.build
 }
 prodPersonal = Website {
     _slug = NE.trustedNonEmpty "personal",
-    _title = NE.trustedNonEmpty "Dan Dart: Software, Maths, HamRadio, Music",
+    _redirectSlugs = [NE.trustedNonEmpty "deadsite"],
+    _title = NE.trustedNonEmpty "Ember Dart: Software, Maths, HamRadio, Music",
     {- _keywords = [
         "dan",
         "dart",
         "dandart",
-        "daniel dart",
+        "ember dart",
         "dan dart",
-        "exmouth",
         "exeter",
         "devon",
         "england",
@@ -143,35 +143,35 @@ prodPersonal = Website {
         "debian"
         ],
     -}
-    _description = NE.trustedNonEmpty "Dan Dart works on a large collection of software and is interested in mathematics, physics, chemistry, radio and linguistics.",
+    _description = NE.trustedNonEmpty "Ember Dart works on a large collection of software and is interested in mathematics, physics, chemistry, radio and linguistics.",
     _previewImgUrl = [relativeReference|/img/preview.png|],
     _baseUrl = productionUrls ^. urlPersonal,
     _pageUrl = productionUrls ^. urlPersonal,
     _sitemapUrl = [relativeReference|/sitemap.xml|],
     _urls = productionUrls,
-    _breadcrumb = Breadcrumb [(NE.trustedNonEmpty "Dan Dart", Nothing)],
+    _breadcrumb = Breadcrumb [(NE.trustedNonEmpty "Ember Dart", Nothing)],
     _siteType = Normal,
-    _email = [QE.email|website@dandart.co.uk|],
+    _email = [QE.email|website@emberdart.co.uk|],
     _openGraphInfo = OGProfile $ OpenGraphProfile {
-        _ogProfileFirstName = NE.trustedNonEmpty "Dan",
+        _ogProfileFirstName = NE.trustedNonEmpty "Ember",
         _ogProfileLastName = NE.trustedNonEmpty "Dart",
-        _ogProfileUsername = NE.trustedNonEmpty "dandart",
-        _ogProfileGender = NE.trustedNonEmpty "non-binary"
+        _ogProfileUsername = NE.trustedNonEmpty "emberdart",
+        _ogProfileGender = NE.trustedNonEmpty "trans female"
     },
     _livereload = False,
     _build = Personal.build
 }
 prodPortfolio = Website {
     _slug = NE.trustedNonEmpty "portfolio",
+    _redirectSlugs = [],
     _title = NE.trustedNonEmpty "JolHarg: Your Software Engineering Partner",
     {- _keywords = [
         "jolharg",
         "dan",
         "dart",
         "dandart",
-        "daniel dart",
+        "ember dart",
         "dan dart",
-        "exmouth",
         "exeter",
         "devon",
         "england",
@@ -217,7 +217,7 @@ prodPortfolio = Website {
         "ubuntu",
         "debian"
         ], -}
-    _description = NE.trustedNonEmpty "Dan Dart can provide you with all kinds of software engineering including fully-functioning web and phone applications.",
+    _description = NE.trustedNonEmpty "Ember Dart can provide you with all kinds of software engineering including fully-functioning web and phone applications.",
     _previewImgUrl = [relativeReference|/img/preview.png|],
     _baseUrl = productionUrls ^. urlPortfolio,
     _pageUrl = productionUrls ^. urlPortfolio,
@@ -232,14 +232,14 @@ prodPortfolio = Website {
 }
 prodBlogTech = Website {
     _slug = NE.trustedNonEmpty "blogtech",
+    _redirectSlugs = [],
     _title = NE.trustedNonEmpty "JolHarg: Software and Technology Blog",
     {- _keywords = [
         "jolharg",
         "blog",
         "dandart",
-        "daniel dart",
+        "ember dart",
         "dan dart",
-        "exmouth",
         "exeter",
         "devon",
         "england",
@@ -292,14 +292,14 @@ prodBlogTech = Website {
 }
 prodHamRadio = Website {
     _slug = NE.trustedNonEmpty "hamradio",
-    _title = NE.trustedNonEmpty "M0ORI call sign: Dan Dart, England",
+    _redirectSlugs = [],
+    _title = NE.trustedNonEmpty "M0ORI call sign: Ember Dart, England",
     {- _keywords = [
         "dan",
         "dart",
         "dandart",
-        "daniel dart",
+        "ember dart",
         "dan dart",
-        "exmouth",
         "exeter",
         "devon",
         "england",
@@ -322,7 +322,7 @@ prodHamRadio = Website {
         "qrz"
         ]
     -}
-    _description = NE.trustedNonEmpty "The M0ORI callsign is owned by Dan Dart located in England. He works on HF and VHF in Exmouth.",
+    _description = NE.trustedNonEmpty "The M0ORI callsign is owned by Ember Dart located in England. He works on HF and VHF in Exmouth.",
     _previewImgUrl = [relativeReference|/img/preview.png|],
     _baseUrl = productionUrls ^. urlHamRadio,
     _pageUrl = productionUrls ^. urlHamRadio,
@@ -337,6 +337,7 @@ prodHamRadio = Website {
 }
 prodBlogHamRadio = Website {
     _slug = NE.trustedNonEmpty "bloghamradio",
+    _redirectSlugs = [],
     _title = NE.trustedNonEmpty "The Blog of M0ORI: Interesting HamRadio Observations",
     _description = NE.trustedNonEmpty "My radio blog covers interesting observations I have had whilst working on ham bands.",
     _previewImgUrl = [relativeReference|/img/preview.png|],
@@ -357,9 +358,9 @@ prodBlogHamRadio = Website {
 }
 prodReviews = Website {
     _slug = NE.trustedNonEmpty "reviews",
+    _redirectSlugs = [],
     _title = NE.trustedNonEmpty "The Mad Hacker: Tech Reviews by a crazy computer enthusiast",
     {- _keywords = [
-        "exmouth",
         "exeter",
         "devon",
         "england",
@@ -378,7 +379,7 @@ prodReviews = Website {
         "dan",
         "dart",
         "dandart",
-        "daniel dart",
+        "ember dart",
         "dan dart",
         "haskell",
         "typescript",
@@ -398,7 +399,7 @@ prodReviews = Website {
         _atomUrl = [relativeReference|/atom.xml|],
         _renderSuffix = renderStars
     },
-    _email = [QE.email|madhacker@dandart.co.uk|], -- TODO add MX
+    _email = [QE.email|madhacker@emberdart.co.uk|], -- TODO add MX
     _openGraphInfo = OGWebsite,
     _livereload = False,
     _build = Reviews.build

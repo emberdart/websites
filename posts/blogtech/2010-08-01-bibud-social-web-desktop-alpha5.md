@@ -33,4 +33,4 @@ Features just around the corner are:
 
 You can try out the alpha 5 prerelease of the desktop by visiting [https://bibud.com](https://web.archive.org/web/20150421072318/http://bibud.com/) in your HTML5-compliant web browser.
 
-The Bibud project are looking for volunteers to help with the project, code contributions, artwork, designs, proof-of-concepts and even just ideas are welcome, and may well be accepted into the official project distribution. If you have anything to contribute, please email the project leader at bibud@dandart.co.uk. The Bibud project is licensed under a MIT-style license.
+The Bibud project are looking for volunteers to help with the project, code contributions, artwork, designs, proof-of-concepts and even just ideas are welcome, and may well be accepted into the official project distribution. If you have anything to contribute, please email the project leader at bibud@emberdart.co.uk. The Bibud project is licensed under a MIT-style license.

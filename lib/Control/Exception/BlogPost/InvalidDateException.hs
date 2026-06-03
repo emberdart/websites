@@ -1,6 +1,6 @@
 {-# LANGUAGE DerivingVia #-}
 
-module Control.Exception.InvalidDateException where
+module Control.Exception.BlogPost.InvalidDateException where
 
 import Control.Exception
 

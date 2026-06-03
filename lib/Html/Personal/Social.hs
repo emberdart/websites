@@ -17,7 +17,7 @@ socialIcons = do
     email' <- view email
     pure . (H.div ! class_ "row social-row") . (H.div ! class_ "text-end social-inside") $ (do
         socialIconS ("mailto:" <> textValue (TE.decodeUtf8Lenient (toByteString email'))) "Email" "envelope"
-        socialIconB "https://github.com/danwdart" "GitHub" "github"
+        socialIconB "https://github.com/emberdart" "GitHub" "github"
         socialIconB "https://www.imdb.com/user/ur81806610" "ImDB" "imdb"
         socialIconB "https://www.last.fm/user/Personal" "Last.fm" "lastfm"
         socialIconB "https://www.linkedin.com/in/dandart" "LinkedIn" "linkedin"

@@ -12,10 +12,10 @@ import Text.Blaze.Html5     as H hiding (main)
 
 pageIntro ∷ (MonadReader Website m) ⇒ m Html
 pageIntro = plainBreadcrumb (NE.trustedNonEmpty "Intro") . makePage "intro" "Intro" defaultLayout defaultPage $ do
-    p "Hello, my name is Dan."
+    p "Hello, my name is Ember."
     p "I am a software engineer, mathematics lover, radio ham and musician."
     p $ do
-        "I work remotely to care for my future wife, "
+        "I work remotely in Exeter, with fond love for my late partner, "
         extLink "https://yanderedarling.com/" "Raven"
         "."
     p "I also enjoy discordant and nonsensical commentary."

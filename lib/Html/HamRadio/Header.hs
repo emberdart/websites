@@ -17,8 +17,8 @@ htmlHeader = do
     pageHamRadio' <- pageHamRadio
     pageContact' <- pageContact
     urlBlogHamRadio' <- view $ urls . urlBlogHamRadio
-    pure . makeHeader "" "M0ORI: Dan Dart" mempty $ do
-        extNav (stringValue $ show urlPersonal') "Dan Dart"
+    pure . makeHeader "" "M0ORI: Ember Dart" mempty $ do
+        extNav (stringValue $ show urlPersonal') "Ember Dart"
         pageHamRadio'
         extNav (stringValue $ show urlBlogHamRadio') "Blog"
         pageContact'

@@ -1,13 +1,12 @@
 {-# LANGUAGE TemplateHaskell #-}
-{-# OPTIONS_GHC -ddump-splices #-}
 
 module Control.Exception.BlogPostException where
 
 import Control.Exception
-import Control.Exception.CommentException
-import Control.Exception.InvalidDateException
-import Control.Exception.MissingPostIdException
-import Control.Exception.ParseFileException
+import Control.Exception.BlogPost.CommentException
+import Control.Exception.BlogPost.InvalidDateException
+import Control.Exception.BlogPost.MissingPostIdException
+import Control.Exception.BlogPost.ParseFileException
 import Control.Lens
 
 -- we could probably do better here

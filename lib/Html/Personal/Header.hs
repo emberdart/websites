@@ -24,7 +24,7 @@ import Text.Blaze.Html5             as H hiding (main)
 linkHamRadio ∷ (MonadReader Website m) ⇒ m Html
 linkHamRadio = do
     urlHamRadio' <- view $ urls . urlHamRadio
-    pure $ extNav (stringValue . show $ urlHamRadio') "Ham HamRadio"
+    pure $ extNav (stringValue . show $ urlHamRadio') "Ham Radio"
 
 linkSoftware ∷ (MonadReader Website m) ⇒ m Html
 linkSoftware = do
@@ -60,4 +60,4 @@ htmlHeader = do
         linkReviews,
         pageContact
         ]
-    pure . makeHeader "#intro" "Dan Dart" socialIcons' $ pages
+    pure . makeHeader "#intro" "Ember Dart" socialIcons' $ pages

@@ -11,7 +11,7 @@ import Text.Blaze.Html5            as H hiding (main)
 import Text.Blaze.Html5.Attributes as A
 
 pageHamRadio ∷ MonadReader Website m ⇒ m Html
-pageHamRadio = plainBreadcrumb (NE.trustedNonEmpty "Ham HamRadio") . makePage "ham" "Ham HamRadio" defaultLayout defaultPage $ do
+pageHamRadio = plainBreadcrumb (NE.trustedNonEmpty "Ham Radio") . makePage "ham" "Ham Radio" defaultLayout defaultPage $ do
     p "I am a UK full-licenced radio amateur, and have been issued the callsign HamRadio."
     p $ do
         "My nearest radio club is Exmouth Amateur HamRadio Club, but they don't seem to have a website. As far as I have been made aware, they meet on the third Wednesday of the month in Marpool Hill Scout Headquarters at 19:30, although I personally cannot attend for mobility and caring reasons."

@@ -1,6 +1,6 @@
 {-# LANGUAGE TemplateHaskell #-}
 
-module Control.Exception.ParseFileException where
+module Control.Exception.BlogPost.ParseFileException where
 
 import Control.Exception
 import Control.Lens

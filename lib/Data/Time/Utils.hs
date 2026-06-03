@@ -1,7 +1,7 @@
 module Data.Time.Utils where
 
 import Control.Applicative                    ((<|>))
-import Control.Exception.InvalidDateException
+import Control.Exception.BlogPost.InvalidDateException
 import Data.Either.Extra
 import Data.Time                              (UTCTime, ZonedTime, toGregorian,
                                                utctDay, zonedTimeToUTC)

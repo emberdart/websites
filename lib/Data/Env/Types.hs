@@ -6,7 +6,7 @@
 
 module Data.Env.Types where
 
-import Control.Exception.MissingAtomURIException
+import Control.Exception.AtomException
 import Control.Lens
 import Control.Monad.Error.Class
 import Control.Monad.Reader
@@ -74,6 +74,7 @@ makeLenses ''OpenGraphInfo
 
 data Website = Website {
     _slug          :: NonEmptyText,
+    _redirectSlugs :: [NonEmptyText],
     _title         :: NonEmptyText,
     -- _keywords :: NESet NonEmptyText,
     _description   :: NonEmptyText,
@@ -87,7 +88,7 @@ data Website = Website {
     _email         :: EmailAddress,
     _openGraphInfo :: OpenGraphInfo,
     _livereload    :: Bool,
-    _build         :: forall m. (MonadError MissingAtomURIException m, MonadReader Website m, MonadIO m) => m ()
+    _build         :: forall m. (MonadError AtomException m, MonadReader Website m, MonadIO m) => m ()
 }
 
 makeLenses ''Website

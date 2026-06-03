@@ -20,7 +20,7 @@ pagePortfolio = do
     email' <- view email
     plainBreadcrumb (NE.trustedNonEmpty "Portfolio") . makePage "portfolio" "Portfolio" customLayout defaultPage $ do
         row . (H.div ! class_ "col-md-12 text-center") $
-            p "Some of the websites, projects and companies Dan Dart has been involved with are:"
+            p "Some of the websites, projects and companies Ember Dart has been involved with are:"
         row $ do
             (H.div ! class_ "card col-md-4 col-12 text-center") . extLink ("mailto:" <> textValue (TE.decodeUtf8Lenient (toByteString email'))) . (H.div ! class_ "card-body") $ (do
                 img ! class_ "card-img-top" ! src "img/sample.png" ! alt "Mockup of a website" ! A.title "Mockup of a website"

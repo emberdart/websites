@@ -43,7 +43,7 @@ Please let me know what you think and if you have any suggestions or can help pl
 
 Credits:
 
-Majority of code: [Dan Dart](https://github.com/dandart/)
+Majority of code: [Ember Dart](https://github.com/dandart/)
 Majority of design: [Nabil Freeman](https://github.com/nabilfreeman)
 
 Till next time!

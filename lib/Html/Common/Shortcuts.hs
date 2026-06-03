@@ -6,9 +6,9 @@ import Html.Common.Link
 import Text.Blaze.Html5 as H hiding (main)
 
 ghPages, ghPagesProjects, projectsSource, imdb, yt, ytChan, ytUser, nhs, oeis ∷ AttributeValue
-ghPages = "https://danwdart.github.io/"
+ghPages = "https://emberdart.github.io/"
 ghPagesProjects = ghPages <> "projects/"
-projectsSource = "https://github.com/danwdart/projects/tree/master"
+projectsSource = "https://github.com/emberdart/projects/tree/master"
 ytChan = "https://www.youtube.com/channel/"
 ytUser = "https://www.youtube.com/user/"
 yt = "https://www.youtube.com/watch?v="

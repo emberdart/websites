@@ -5,8 +5,8 @@
 
 module Html.Common.Blog.Comment where
 
-import Control.Exception.CommentException
-import Control.Exception.ParseFileException
+import Control.Exception.BlogPost.CommentException
+import Control.Exception.BlogPost.ParseFileException
 import Control.Monad
 import Control.Monad.Error.Class
 import Control.Monad.Reader

@@ -3,13 +3,16 @@
 
 module Build.Blogs where
 
-import Control.Exception.MissingAtomURIException
+import Control.Exception.AtomException
+import Control.Exception.Atom.MissingAtomURIException
+import Control.Exception.Atom.CantGenerateFeedException
 import Control.Lens
 import Control.Monad                 (join)
 import Control.Monad.Error.Class
 import Control.Monad.IO.Class
 import Control.Monad.Reader
 import Data.ByteString.Char8         qualified as BS
+import Data.ByteString.Lazy.Char8         qualified as BSL
 import Data.Env.Types                as Env
 import Data.Foldable
 import Data.Foldable1
@@ -29,10 +32,12 @@ import Data.Text                     qualified as T
 import Data.Text.IO                  qualified as TIO
 import Data.Time.Clock
 import Data.Traversable
+import GHC.Stack
 import Html.Common.Blog.Feed
 import Html.Common.Blog.Link
 import Html.Common.Blog.Post
 import Html.Common.Blog.Types        qualified as BlogTypes
+import Html.Common.Redirect
 import Make
 import Network.URI
 import System.Directory
@@ -99,8 +104,9 @@ connectivityNE xss = MNE.unsafeFromMap $ foldr' (
   ) M.empty xss
 -}
 
-build ∷ (MonadReader Website m, MonadError MissingAtomURIException m, MonadIO m) ⇒ (Html → Html → Html → m Html) → m Html → m ()
+build ∷ (HasCallStack, MonadReader Website m, MonadError AtomException m, MonadIO m) ⇒ (Html → Html → Html → m Html) → m Html → m ()
 build page page404 = do
+  ws <- ask
   baseUrl' <- view baseUrl
   title' <- view Env.title
   slug' <- view slug
@@ -108,10 +114,10 @@ build page page404 = do
   sitemapUrl' <- view sitemapUrl
   atomUri' <- case mAtomUri' of
       Just x  -> pure x
-      Nothing -> throwError MissingAtomURIException -- no Monoid for URI -- is that right?
+      Nothing -> throwError . AtomMissingAtomURIException $ MissingAtomURIException -- no Monoid for URI -- is that right?
   -- atomTitle' <- view $ siteType . atomTitle
   -- Clear us out, Jim
-  let siteDir = ".sites/" <> T.unpack (NE.getNonEmpty slug') <> "/"
+  let siteDir = ".sites" </> T.unpack (NE.getNonEmpty slug') <> "/"
   traverse_ (liftIO . removePathForcibly . (siteDir <>)) [
     "post",
     "tag"
@@ -150,7 +156,7 @@ build page page404 = do
   -- go through each post and add a tag for each other tag. If there are more than one tag for another tag this means something.
   -- Probably means implication if x<y, equality if x = y, reverse implication if x>y.
 
-  let _commonalities :: MNE.NEMap BlogTypes.BlogTag (MNE.NEMap BlogTypes.BlogTag Int) = undefined
+  -- let _commonalities :: MNE.NEMap BlogTypes.BlogTag (MNE.NEMap BlogTypes.BlogTag Int) = undefined
   
   -- pretty sus of this
   tagUrlDates <- MNE.elems <$> MNE.traverseWithKey (\tag posts -> do
@@ -158,7 +164,7 @@ build page page404 = do
     postsRendered <- foldtraverse renderPost posts
     -- TODO: lowercase earlier?
 
-    let relTagUri = fromJust . parseRelativeReference $ "/tag/" <> escapeURIString isUnescapedInURIComponent (T.unpack (NE.getNonEmpty (BlogTypes.getTag tag)))
+    let relTagUri = fromJust . parseRelativeReference $ "/tag" </> escapeURIString isUnescapedInURIComponent (T.unpack (NE.getNonEmpty (BlogTypes.getTag tag)))
     let relAtomUri = fromJust . parseRelativeReference $ "/atom.xml"
     let tagUri' = relTagUri `relativeTo` baseUrl'
     let tagAtomUri' = relAtomUri `relativeTo` tagUri'
@@ -169,9 +175,11 @@ build page page404 = do
     let atomPrefixer = (atomPrefix <>)
     let fullAtomTitle' = atomPrefixer title'
 
-    let atomFilename = ".sites" </> T.unpack (NE.getNonEmpty slug') </> "tag" </> T.unpack (NE.getNonEmpty (BlogTypes.getTag tag)) </> "atom.xml"
-    let fullFilename = siteDir <> "tag/" <> T.unpack (NE.getNonEmpty (BlogTypes.getTag tag)) <> "/index.html"
-    let dirname = dropFileName fullFilename
+    let atomTagFilename = "tag" </> T.unpack (NE.getNonEmpty (BlogTypes.getTag tag)) </> "atom.xml"
+    let fullAtomTagFilename = ".sites" </> T.unpack (NE.getNonEmpty slug') </> atomTagFilename
+    let tagFilename = "tag" </> T.unpack (NE.getNonEmpty (BlogTypes.getTag tag)) </> "index.html"
+    let fullTagFilename = siteDir <> tagFilename
+    let dirname = dropFileName fullTagFilename
 
     pageTag <- locally title atomPrefixer .
       locally (siteType . atomTitle) atomPrefixer .
@@ -179,25 +187,50 @@ build page page404 = do
       addBreadcrumb atomDesc $
       page (makeLinks Nothing (NE.trustedNonEmpty "#") atomDesc posts) (makeTags (Just tag) tags) postsRendered --  (("Posts tagged with " <> BlogTypes.getTag tag <> ": ") <>)
 
-    liftIO . createDirectoryIfMissing True $ dirname
-    liftIO . BS.writeFile fullFilename . BS.toStrict . renderHtml $ pageTag
-    case makeRSSFeed tagAtomUri' tagUri' baseUrl' fullAtomTitle' posts of
-        Just rssFeed -> liftIO . TIO.writeFile atomFilename . NE.getNonEmpty $ rssFeed
-        Nothing -> liftIO . putStrLn $ "No RSS feed - todo error"
-    -- liftIO . TIO.putStrLn $ "/tag/" <> BlogTypes.getTag tag
+    mkdirp dirname
+
+    liftIO . BS.writeFile fullTagFilename . BS.toStrict . renderHtml $ pageTag
+    
+    -- TODO redirect here
+    for_ (ws ^. redirectSlugs) $ \redirectSlug -> do
+      let fullRedirectFilename = ".sites" </> (T.unpack . NE.getNonEmpty $ redirectSlug) </> tagFilename
+      let redirectDirname = dropFileName fullRedirectFilename
+      mkdirp redirectDirname
+      pageRedir <- pageRedirect tagFilename
+      liftIO . BSL.writeFile fullRedirectFilename . renderHtml $ pageRedir
+
+    let mRssFeed = makeRSSFeed tagAtomUri' tagUri' baseUrl' fullAtomTitle' posts
+
+    -- unless mRssFeed $ 
+    case mRssFeed of
+      Just rssFeed -> do
+        liftIO . TIO.writeFile fullAtomTagFilename . NE.getNonEmpty $ rssFeed
+        for_ (ws ^. redirectSlugs) (\redirectSlug -> do
+          let fullRedirectAtomFilename = ".sites" </> (T.unpack . NE.getNonEmpty $ redirectSlug) </> atomTagFilename
+          let fullRedirectAtomDirname = dropFileName fullRedirectAtomFilename
+          mkdirp fullRedirectAtomDirname
+          -- pageRedir <- pageRedirect tagFilename
+          liftIO . TIO.writeFile fullRedirectAtomFilename . NE.getNonEmpty $ rssFeed
+          )
+      Nothing -> throwError . AtomCantGenerateFeedException $ CantGenerateFeedException {
+        excAtomXml = tagAtomUri',
+        excSelfUrl = tagUri',
+        excDomain = baseUrl',
+        excTitle = fullAtomTitle'
+      }
+    -- liftIO . TIO.putStrLn $ "/tag" </> BlogTypes.getTag tag
     -- traverse_ (liftIO . TIO.putStrLn . BlogTypes.title . BlogTypes.metadata) posts
     pure (
       tagUri',
-      (BlogTypes.date . BlogTypes.metadata)
-      {- HLINT ignore "Avoid partial function" -}
-      (LNE.head posts) -- this should not be marked as partial by hlint because it's notElem
+      (BlogTypes.date . BlogTypes.metadata) (LNE.head posts)
       )
     ) grouped
   -- By post
   urlDatePairsFromPages <- fmap join . for sortedPosts $ \post -> do
     let aliases' = BlogTypes.aliases . BlogTypes.metadata $ post
     for aliases' $ \alias -> do
-      let fullFilename = siteDir <> "post" <> alias <> "/index.html" -- </> ???
+      let filename = "post" <> alias </> "index.html"
+      let fullFilename = siteDir </> filename
       let dirname = dropFileName fullFilename
       let aliasSuffix = fromJust . parseRelativeReference $ alias
       let aliasUrl = aliasSuffix `relativeTo` baseUrl'
@@ -205,7 +238,7 @@ build page page404 = do
       let postTitlePrefix = postTitle <> NE.trustedNonEmpty ": "
       let postTitlePrefixer = (postTitlePrefix <>)
 
-      liftIO . createDirectoryIfMissing True $ dirname
+      mkdirp dirname
       renderedPost <- renderPost post
       pageBlogPost <- locally title postTitlePrefixer .
         local (set openGraphInfo (OGArticle $ OpenGraphArticle {
@@ -214,10 +247,10 @@ build page page404 = do
             _ogArticleExpirationTime = Nothing,
             _ogArticleAuthor =
               OpenGraphProfile {
-                _ogProfileFirstName = NE.trustedNonEmpty "Dan",
+                _ogProfileFirstName = NE.trustedNonEmpty "Ember",
                 _ogProfileLastName = NE.trustedNonEmpty "Dart",
-                _ogProfileUsername = NE.trustedNonEmpty "dandart",
-                _ogProfileGender = NE.trustedNonEmpty "non-binary"
+                _ogProfileUsername = NE.trustedNonEmpty "emberdart",
+                _ogProfileGender = NE.trustedNonEmpty "trans female"
               } :| [],
             _ogArticleSection = NE.trustedNonEmpty "Blog post",
             _ogArticleTag = BlogTypes.tags . BlogTypes.metadata $ post
@@ -228,22 +261,47 @@ build page page404 = do
         }) . addBreadcrumb (BlogTypes.title . BlogTypes.metadata $ post) $
         page (makeLinks (Just . BlogTypes.postId $ post) (NE.trustedNonEmpty "/#") (NE.trustedNonEmpty "All Posts") sortedPosts) (makeTags Nothing tags) renderedPost
       liftIO . BS.writeFile fullFilename . BS.toStrict . renderHtml $ pageBlogPost
+
+      for_ (ws ^. redirectSlugs) $ \redirectSlug -> do
+        let redirectFilename = ".sites" </> (T.unpack . NE.getNonEmpty $ redirectSlug) </> filename
+        let redirectDirname = dropFileName redirectFilename
+        mkdirp redirectDirname
+        pageRedir <- pageRedirect filename
+        liftIO . BSL.writeFile redirectFilename . renderHtml $ pageRedir
       pure (
         aliasUrl,
         BlogTypes.date . BlogTypes.metadata $ post
         )
-
   now <- liftIO getCurrentTime
   let sitemap' = Sitemap $ [
         SitemapUrl (T.show baseUrl') (Just now) (Just Weekly) (Just 1.0)
         ] <> fmap (\(url, date) -> SitemapUrl (T.show url) (Just date) (Just Never) (Just 1.0)) (LNE.toList urlDatePairsFromPages)
           <> fmap (\(url, date) -> SitemapUrl (T.show url) (Just date) (Just Weekly) (Just 2.0)) (LNE.toList tagUrlDates)
-  liftIO . BS.writeFile (siteDir <> "/sitemap.xml") $ renderSitemap sitemap'
+  liftIO . putStrLn $ "Saving sitemap to " <> siteDir <> "/sitemap.xml"
+  liftIO . BS.writeFile (siteDir </> "sitemap.xml") $ renderSitemap sitemap'
+
+  for_ (ws ^. redirectSlugs) $ \redirectSlug -> do
+    liftIO . BSL.writeFile (".sites" </> (T.unpack . NE.getNonEmpty $ redirectSlug) </> "sitemap.xml") $ renderSitemap sitemap'
   
   case makeRSSFeed atomUri' baseUrl' baseUrl' title' sortedPosts of
-    Just rssFeed' -> liftIO . TIO.writeFile (siteDir <> "atom.xml") . NE.getNonEmpty $ rssFeed'
-    Nothing -> liftIO . putStrLn $ "There was no feed to write... todo make this a proper error"
+    Just rssFeed' -> do
+      liftIO . TIO.writeFile (siteDir <> "atom.xml") . NE.getNonEmpty $ rssFeed'
+
+      for_ (ws ^. redirectSlugs) $ \redirectSlug -> do
+        liftIO . TIO.writeFile (".sites" </> (T.unpack . NE.getNonEmpty $ redirectSlug) </> "atom.xml") . NE.getNonEmpty $ rssFeed'
+
+    Nothing -> throwError . AtomCantGenerateFeedException $ CantGenerateFeedException {
+      excAtomXml = atomUri',
+      excSelfUrl = baseUrl',
+      excDomain = baseUrl',
+      excTitle = title'
+    }
     
   liftIO . BS.writeFile (siteDir <> "/robots.txt") $
     "User-agent: *\nAllow: /\nSitemap: " <> BS.pack (show sitemapUrl') <> "\nContent-Signal: ai-train=no, search=yes, ai-input=no"
-  make slug' (page (makeLinks Nothing (NE.trustedNonEmpty "#") (NE.trustedNonEmpty "All Posts") sortedPosts) (makeTags Nothing tags) renderedPosts) page404
+  
+  for_ (ws ^. redirectSlugs) $ \redirectSlug -> do
+    liftIO . BS.writeFile (".sites" </> (T.unpack . NE.getNonEmpty $ redirectSlug) <> "/robots.txt") $
+      "User-agent: *\nAllow: /\nSitemap: " <> BS.pack (show sitemapUrl') <> "\nContent-Signal: ai-train=no, search=yes, ai-input=no"
+    
+  make (page (makeLinks Nothing (NE.trustedNonEmpty "#") (NE.trustedNonEmpty "All Posts") sortedPosts) (makeTags Nothing tags) renderedPosts) page404

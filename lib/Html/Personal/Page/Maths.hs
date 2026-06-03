@@ -53,9 +53,9 @@ pageMaths = plainBreadcrumb (NE.trustedNonEmpty "Maths") . makePage "maths" "Mat
         "I also discovered "
         extLink (oeis <> "332049") "A332049: a(n) = (1/2) * Sum_{d|n, d > 1} d * phi(d)"
         " seemingly first "
-        extLink "https://github.com/danwdart/projects/commit/8691b3ebcd4560f1eeae9cefccc017becce29256#diff-d849c35e9758cd82b45e19d5c4d74ee08e32d8a0092476e3189bebeca7156ac5" "in 2019"
+        extLink "https://github.com/emberdart/projects/commit/8691b3ebcd4560f1eeae9cefccc017becce29256#diff-d849c35e9758cd82b45e19d5c4d74ee08e32d8a0092476e3189bebeca7156ac5" "in 2019"
         ", but wasn't the first to submit it."
     p $ do
         "I have "
-        extLink "https://github.com/danwdart/projects/tree/master/haskell/maths/src/oeis" "a repository"
+        extLink "https://github.com/emberdart/projects/tree/master/haskell/maths/src/oeis" "a repository"
         " containing code that generates some more sequences in Haskell."

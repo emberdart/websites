@@ -17,5 +17,5 @@ build ∷ forall m. (MonadReader Website m, MonadIO m) ⇒ m ()
 build = do
   -- void . liftIO $ loadFile defaultConfig
   -- foldTraverse? Monoid b => (a -> f b) -> t a -> f b = foldMapM/concatMapM
-  results <- fold <$> traverse (runReq defaultHttpConfig . getRepos) [NE.trustedNonEmpty "jolharg", NE.trustedNonEmpty "danwdart"]
+  results <- fold <$> traverse (runReq defaultHttpConfig . getRepos) [NE.trustedNonEmpty "jolharg", NE.trustedNonEmpty "emberdart"]
   Normal.build (runReader page results) page404

@@ -2,12 +2,12 @@ cabal-version:      3.14
 
 -- Newer versions complain
 name:               websites
-version:            0.2.0.0
-homepage:           https://github.com/danwdart/websites#readme
+version:            1.0.0.0
+homepage:           https://github.com/emberdart/websites#readme
 license:            AGPL-3.0-only
-author:             Dan Dart
-maintainer:         cabal@dandart.co.uk
-copyright:          2019-2021 Dan Dart
+author:             Ember Dart
+maintainer:         cabal@emberdart.co.uk
+copyright:          2019-2021 Ember Dart
 category:           Web
 build-type:         Simple
 extra-source-files: README.md
@@ -69,7 +69,7 @@ library
     , req                     ^>=3.13.4
     , sitemap-gen             ^>=0.1
     , text                    ^>=2.1.2
-    , time                    ^>=1.15
+    , time                    ^>=1.16
 
   -- , dotenv               ^>=0.12
   other-modules:
@@ -83,12 +83,14 @@ library
     Build.Reviews
     Build.Normal
     Build.Sitemap
+    Control.Exception.AtomException
+    Control.Exception.Atom.CantGenerateFeedException
+    Control.Exception.Atom.MissingAtomURIException
     Control.Exception.BlogPostException
-    Control.Exception.CommentException
-    Control.Exception.InvalidDateException
-    Control.Exception.MissingAtomURIException
-    Control.Exception.MissingPostIdException
-    Control.Exception.ParseFileException
+    Control.Exception.BlogPost.CommentException
+    Control.Exception.BlogPost.InvalidDateException
+    Control.Exception.BlogPost.MissingPostIdException
+    Control.Exception.BlogPost.ParseFileException
     Data.Foldable.Monoid
     Data.Time.Utils
     Html.BlogPersonal.Header
@@ -117,6 +119,7 @@ library
     Html.Common.Icon
     Html.Common.Link
     Html.Common.Page
+    Html.Common.Redirect
     Html.Common.Shortcuts
     Html.Common.Social
     Html.Common.Utils
@@ -161,7 +164,7 @@ executable build
   default-extensions: UnicodeSyntax
   build-depends:
     , base      ^>=4.22
-    , websites  ^>=0.2
+    , websites  ^>=1.0
 
 test-suite websites-test
   import:             shared-properties
@@ -189,7 +192,7 @@ test-suite websites-test
     , text               ^>=2.1.2
     , webdriver          ^>=0.12.0.1
     , webdriver-wrapper  ^>=0.2.0.1
-    , websites           ^>=0.2
+    , websites           ^>=1.0
     , witherable         ^>=0.5
 
   -- , containers           ^>=0.8
@@ -213,4 +216,4 @@ benchmark websites-bench
   build-depends:
     , base       ^>=4.22
     , criterion  ^>=1.6.4
-    , websites   ^>=0.2
+    , websites   ^>=1.0

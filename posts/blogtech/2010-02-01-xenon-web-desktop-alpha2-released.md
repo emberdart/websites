@@ -12,7 +12,7 @@ The web desktop Xenon released version Alpha2 today. The release announcement fr
 Pictures app, width autoscaling, new tab launching, easier installation and various visual tweaks.
 
 Please either use the https://web.archive.org/web/20100107134808/https://xenon.kevinghadyani.com/ (edit 2021: archived), or ddownload to your server at xenon.kevinghadyani.com/xenon_alpha2.tar.bz2 (edit 2021: not archived). Please help by submitting bugs, patches,
-new apps, icons, etc to xenon@dandart.co.uk. Thank you."
+new apps, icons, etc to xenon@emberdart.co.uk. Thank you."
 
 
 Xenon is a web desktop, which means that all your applications, work and settings are stored on the web.
@@ -40,6 +40,6 @@ Upcoming features include:
 
 To try the system out for yourself, you can [try the demo](https://web.archive.org/web/20100107134808/https://xenon.kevinghadyani.com/) (edit 2021: archived) or download the software at xenon.kevinghadyani.com/xenon_alpha2.tar.bz2 (edit 2021: not archived) to your server.
 
-Please send patches, icons, ideas, apps, et al to [xenon@dandart.co.uk](mailto:xenon@dandart.co.uk)
+Please send patches, icons, ideas, apps, et al to [xenon@emberdart.co.uk](mailto:xenon@emberdart.co.uk)
 
 The project's website is at [https://xenon.kevinghadyani.com](https://web.archive.org/web/20100107134808/http://xenon.kevinghadyani.com/) (edit 2021: archived) or a shorter version: [https://hackerlanes.com](https://web.archive.org/web/20091220083328/https://hackerlanes.com/) (edit 2021: archived)

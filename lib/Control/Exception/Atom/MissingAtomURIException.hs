@@ -1,4 +1,4 @@
-module Control.Exception.MissingAtomURIException where
+module Control.Exception.Atom.MissingAtomURIException where
 
 import Control.Exception
 

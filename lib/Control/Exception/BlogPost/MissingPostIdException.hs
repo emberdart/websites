@@ -1,4 +1,4 @@
-module Control.Exception.MissingPostIdException where
+module Control.Exception.BlogPost.MissingPostIdException where
 
 import Control.Exception
 

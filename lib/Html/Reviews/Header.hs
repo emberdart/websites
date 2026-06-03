@@ -21,7 +21,7 @@ htmlHeader reviewLinks reviewTagLinks reviews' = do
                 img ! src "/img/favicon.png" ! A.style "height:32px" ! alt "ReviewsReviews Favicon Logo" ! A.title "ReviewsReviews Favicon Logo"
                 H.span ! class_ "title ms-2" $ "The Mad Hacker: Reviews"
             (H.div ! class_ "col") . (ul ! class_ "navbar-nav px-3") $ do
-                    extNav (stringValue (show urlPersonal')) "Dan Dart"
+                    extNav (stringValue (show urlPersonal')) "Ember Dart"
                     pageReviews'
                     dlNav (toValue atomXml') "Atom Feed"
         )

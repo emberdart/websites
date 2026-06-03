@@ -29,13 +29,13 @@ This will also allow me to more frequently write blog posts, so look forward to 
 
 Here is the current list of websites that have now been updated:
 
-- [Personal website](https://dandart.co.uk)
+- [Personal website](https://emberdart.co.uk)
 - [Portfolio](https://jolharg.com)
 - [Radio ham website](https://m0ori.com)
 
 And blogs affected:
 
-- [Personal blog](https://blog.dandart.co.uk)
+- [Personal blog](https://blog.emberdart.co.uk)
 - [Code blog](https://blog.jolharg.com)
 - [Radio blog](https://blog.m0ori.com)
 - [Reviews website](https://madhackerreviews.com)

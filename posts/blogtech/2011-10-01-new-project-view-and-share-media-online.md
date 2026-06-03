@@ -54,4 +54,4 @@ For anyone who wishes to have input / contribute / help / be awesome can do so i
 
 By adding a comment to this blog
 By adding and talking to me on G+ (gplus.to/dandart)
-by emailing me on shareav@dandart.co.uk
+by emailing me on shareav@emberdart.co.uk
