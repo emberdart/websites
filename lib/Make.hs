@@ -7,7 +7,8 @@ module Make where
 import Control.Monad
 import Control.Monad.Error.Class
 import Control.Monad.Reader
-import Data.ByteString.Char8         qualified as BS
+import Control.Lens
+import Data.ByteString.Lazy.Char8         qualified as BSL
 import Data.Env.Types
 import Data.Foldable
 import Data.List                     (sortOn)
@@ -17,28 +18,41 @@ import Data.NonEmpty                 qualified as NE
 import Data.Ord                      (Down (Down))
 import Data.Text                     qualified as T
 import Data.Text.IO                  qualified as TIO
-import Data.Text.NonEmpty            qualified as TNE
 import Distribution.Simple.Utils
 import Distribution.Verbosity
+-- import GHC.Stack
 import Html.Common.Blog.Post
 import Html.Common.Blog.Types
-import System.Directory              (doesFileExist, getDirectoryContents)
+import Html.Common.Redirect
+import System.Directory              (createDirectoryIfMissing, doesFileExist, getDirectoryContents)
 import System.FilePath               ((</>))
--- import System.Path
-import Text.Blaze.Html.Renderer.Utf8
+-- import System.PathZ
 import Text.Blaze.Html5              as H
+import Text.Blaze.Html.Renderer.Utf8 (renderHtml)
 
-make ∷ (MonadReader Website m, MonadIO m) ⇒ TNE.NonEmptyText → m Html → m Html → m ()
-make name page page404 = do
-    let path = T.unpack (NE.getNonEmpty name)
+mkdirp :: MonadIO m => FilePath -> m ()
+mkdirp dir = liftIO $ createDirectoryIfMissing True dir
+
+make ∷ (MonadReader Website m, MonadIO m) => m Html → m Html → m ()
+make page page404 = do
+    ws <- ask
+    let slug' = ws ^. slug
+    let path = T.unpack (NE.getNonEmpty slug')
     page' <- page
     page404' <- page404
+    pageRedir <- pageRedirect "/"
     liftIO $ do
-        copyDirectoryRecursive silent  "static/common" (".sites" </> path)
-        copyDirectoryRecursive silent ("static" </> path) (".sites" </> path)
-        BS.writeFile (".sites" </> path </> "index.html") . BS.toStrict $ renderHtml page'
-        BS.writeFile (".sites" </> path </> "404.html") . BS.toStrict $ renderHtml page404'
-        TIO.putStrLn $ NE.getNonEmpty name <> " compiled."
+      installDirectoryContents silent "static/common" (".sites" </> path)
+      installDirectoryContents silent ("static" </> path) (".sites" </> path)
+      for_ (ws ^. redirectSlugs) $ \redirectSlug -> do
+        liftIO . putStrLn $ "Redirection creating in " <> ".sites" </> (T.unpack . NE.getNonEmpty $ redirectSlug)
+        -- let redirectDirname = ".sites" </> (T.unpack . NE.getNonEmpty $ redirectSlug)
+        installDirectoryContents silent ("static" </> (T.unpack . NE.getNonEmpty $ redirectSlug)) (".sites" </> (T.unpack . NE.getNonEmpty $ redirectSlug))
+        BSL.writeFile (".sites" </> (T.unpack . NE.getNonEmpty $ redirectSlug) </> "index.html") . renderHtml $ pageRedir
+        BSL.writeFile (".sites" </> (T.unpack . NE.getNonEmpty $ redirectSlug) </> "404.html") . renderHtml $ pageRedir
+      BSL.writeFile (".sites" </> path </> "index.html") $ renderHtml page' 
+      BSL.writeFile (".sites" </> path </> "404.html") $ renderHtml page404'
+      TIO.putStrLn $ NE.getNonEmpty slug' <> " compiled."
 
 foldtraverse ∷ (Monoid b', Traversable t, Applicative f) ⇒ (a' → f b') → t a' → f b'
 foldtraverse f xs = fold <$> traverse f xs

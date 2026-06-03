@@ -4,8 +4,8 @@
 module Html.Common.Blog.Post where
 
 import Control.Exception.BlogPostException
-import Control.Exception.MissingPostIdException
-import Control.Exception.ParseFileException
+import Control.Exception.BlogPost.MissingPostIdException
+import Control.Exception.BlogPost.ParseFileException
 import Control.Lens
 import Control.Monad.Error.Class
 import Control.Monad.Reader
@@ -34,12 +34,13 @@ import Text.Pandoc.Highlighting
 import Text.Pandoc.Options
 import Text.Pandoc.Readers.Markdown
 import Text.Pandoc.Writers.HTML
--- import Text.Blaze.Html.Renderer.Text (renderHtml)
+-- import Text.Blaze.Html.Renderer.Utf8 (renderHtml)
 
 parseFile ∷ FilePath → ByteString → Either ParseFileException ParseResult
 parseFile filename' contents' = case parseYamlFrontmatter contents' of
     Done i' r -> Right $ ParseResult r (fromRight "" $ runPure (writeHtml5 (def {
-            writerHighlightMethod = Skylighting haddock
+            writerHighlightMethod = Skylighting haddock,
+            writerEmailObfuscation = ReferenceObfuscation
         }) =<< readMarkdown (def {
             readerExtensions = githubMarkdownExtensions
         }) (TE.decodeUtf8Lenient i')))
@@ -151,7 +152,7 @@ renderPost (BlogPost postId' metadata' html' comments') = do
         small $ do
             a ! href (fromString . ("/post" <>) . LNE.head . BlogTypes.aliases $ metadata') $ "Permalink"
             " | Author: "
-            a ! href (fromString . T.unpack $ "mailto:" <> TE.decodeUtf8Lenient (toByteString email') <> "?subject=" <> NE.getNonEmpty (BlogTypes.title metadata')) $ "Dan Dart"
+            a ! href (fromString . T.unpack $ "mailto:" <> TE.decodeUtf8Lenient (toByteString email') <> "?subject=" <> NE.getNonEmpty (BlogTypes.title metadata')) $ "Ember Dart"
             " | Published: "
             fromString . show . date $ metadata'
             " | Tags: "

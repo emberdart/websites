@@ -21,7 +21,7 @@ import Html.Common.Blog.Types
 import Network.URI                   qualified as NetURI
 import Text.Atom.Feed                qualified as Atom
 import Text.Atom.Feed.Export         qualified as Export
-import Text.Blaze.Html.Renderer.Text (renderHtml)
+import Text.Blaze.Html.Renderer.Utf8 (renderHtml)
 import Text.Blaze.Html5              as H hiding (main)
 import Text.Blaze.Html5.Attributes   as A
 
@@ -47,13 +47,13 @@ toEntry domain (BlogPost _ BlogMetadata { aliases = aliases', title = title', da
     )
     { Atom.entryAuthors = [
         Atom.nullPerson {
-            Atom.personName = "Dan Dart"
+            Atom.personName = "Ember Dart"
         }
         ]
     , Atom.entryLinks = [
         Atom.nullLink (TE.decodeUtf8Lenient domain <> "/post" <> T.pack (LNE.head aliases'))
         ]
-    , Atom.entryContent = Just (Atom.HTMLContent . TL.toStrict . renderHtml $ html')
+    , Atom.entryContent = Just (Atom.HTMLContent . TE.decodeUtf8 . BS.toStrict . renderHtml $ html')
     }
 
 dateUpdated ∷ NonEmpty BlogPost → Text

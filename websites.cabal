@@ -2,12 +2,12 @@ cabal-version:      3.14
 
 -- Newer versions complain
 name:               websites
-version:            0.2.0.0
-homepage:           https://github.com/danwdart/websites#readme
+version:            1.0.0.0
+homepage:           https://github.com/emberdart/websites#readme
 license:            AGPL-3.0-only
-author:             Dan Dart
-maintainer:         cabal@dandart.co.uk
-copyright:          2019-2021 Dan Dart
+author:             Ember Dart
+maintainer:         cabal@emberdart.co.uk
+copyright:          2019-2021 Ember Dart
 category:           Web
 build-type:         Simple
 extra-source-files: README.md
@@ -65,41 +65,43 @@ library
     , nonempty-wrapper        ^>=0.1
     , nonempty-wrapper-aeson  ^>=0.1
     , nonempty-wrapper-text   ^>=0.1
-    , pandoc                  ^>=3.8.1
+    , pandoc                  ^>=3.9
     , req                     ^>=3.13.4
     , sitemap-gen             ^>=0.1
     , text                    ^>=2.1.2
-    , time                    ^>=1.15
+    , time                    ^>=1.16
 
   -- , dotenv               ^>=0.12
   other-modules:
-    Build.Blog
-    Build.BlogJolHarg
-    Build.BlogM0ORI
+    Build.BlogPersonal
+    Build.BlogTech
+    Build.BlogHamRadio
     Build.Blogs
-    Build.DanDart
-    Build.JolHarg
-    Build.M0ORI
-    Build.MadHacker
+    Build.Personal
+    Build.Portfolio
+    Build.HamRadio
+    Build.Reviews
     Build.Normal
     Build.Sitemap
+    Control.Exception.AtomException
+    Control.Exception.Atom.CantGenerateFeedException
+    Control.Exception.Atom.MissingAtomURIException
     Control.Exception.BlogPostException
-    Control.Exception.CommentException
-    Control.Exception.InvalidDateException
-    Control.Exception.MissingAtomURIException
-    Control.Exception.MissingPostIdException
-    Control.Exception.ParseFileException
+    Control.Exception.BlogPost.CommentException
+    Control.Exception.BlogPost.InvalidDateException
+    Control.Exception.BlogPost.MissingPostIdException
+    Control.Exception.BlogPost.ParseFileException
     Data.Foldable.Monoid
     Data.Time.Utils
-    Html.Blog.Header
-    Html.Blog.Index
-    Html.Blog.Page.Blog
-    Html.BlogJolHarg.Header
-    Html.BlogJolHarg.Index
-    Html.BlogJolHarg.Page.Blog
-    Html.BlogM0ORI.Header
-    Html.BlogM0ORI.Index
-    Html.BlogM0ORI.Page.Blog
+    Html.BlogPersonal.Header
+    Html.BlogPersonal.Index
+    Html.BlogPersonal.Page.Blog
+    Html.BlogTech.Header
+    Html.BlogTech.Index
+    Html.BlogTech.Page.Blog
+    Html.BlogHamRadio.Header
+    Html.BlogHamRadio.Index
+    Html.BlogHamRadio.Page.Blog
     Html.Common.Audio
     Html.Common.Blog.Comment
     Html.Common.Blog.Feed
@@ -117,35 +119,36 @@ library
     Html.Common.Icon
     Html.Common.Link
     Html.Common.Page
+    Html.Common.Redirect
     Html.Common.Shortcuts
     Html.Common.Social
     Html.Common.Utils
-    Html.DanDart.Data
-    Html.DanDart.Header
-    Html.DanDart.Index
-    Html.DanDart.Page.About
-    Html.DanDart.Page.Characters
-    Html.DanDart.Page.Contact
-    Html.DanDart.Page.Favourites
-    Html.DanDart.Page.Health
-    Html.DanDart.Page.Intro
-    Html.DanDart.Page.Maths
-    Html.DanDart.Page.Music
-    Html.DanDart.Page.Origami
-    Html.DanDart.Social
-    Html.JolHarg.Header
-    Html.JolHarg.Index
-    Html.JolHarg.Page.Contact
-    Html.JolHarg.Page.FreeSoftware
-    Html.JolHarg.Page.Portfolio
-    Html.M0ORI.Header
-    Html.M0ORI.Index
-    Html.M0ORI.Page.Contact
-    Html.M0ORI.Page.HamRadio
-    Html.MadHacker.Header
-    Html.MadHacker.Index
-    Html.MadHacker.Page.Reviews
-    Html.MadHacker.Suffix
+    Html.Personal.Data
+    Html.Personal.Header
+    Html.Personal.Index
+    Html.Personal.Page.About
+    Html.Personal.Page.Characters
+    Html.Personal.Page.Contact
+    Html.Personal.Page.Favourites
+    Html.Personal.Page.Health
+    Html.Personal.Page.Intro
+    Html.Personal.Page.Maths
+    Html.Personal.Page.Music
+    Html.Personal.Page.Origami
+    Html.Personal.Social
+    Html.Portfolio.Header
+    Html.Portfolio.Index
+    Html.Portfolio.Page.Contact
+    Html.Portfolio.Page.FreeSoftware
+    Html.Portfolio.Page.Portfolio
+    Html.HamRadio.Header
+    Html.HamRadio.Index
+    Html.HamRadio.Page.Contact
+    Html.HamRadio.Page.HamRadio
+    Html.Reviews.Header
+    Html.Reviews.Index
+    Html.Reviews.Page.Reviews
+    Html.Reviews.Suffix
     Make
 
   exposed-modules:
@@ -161,7 +164,7 @@ executable build
   default-extensions: UnicodeSyntax
   build-depends:
     , base      ^>=4.22
-    , websites  ^>=0.2
+    , websites  ^>=1.0
 
 test-suite websites-test
   import:             shared-properties
@@ -181,7 +184,7 @@ test-suite websites-test
     , base               ^>=4.22
     , hspec              ^>=2.11.15
     , http-client        ^>=0.7.18
-    , http-client-tls    ^>=0.3.6.4
+    , http-client-tls    ^>=0.4
     , http-types         ^>=0.12.4
     , lens               ^>=5.3.3
     , network-uri        ^>=2.6.4.2
@@ -189,7 +192,7 @@ test-suite websites-test
     , text               ^>=2.1.2
     , webdriver          ^>=0.12.0.1
     , webdriver-wrapper  ^>=0.2.0.1
-    , websites           ^>=0.2
+    , websites           ^>=1.0
     , witherable         ^>=0.5
 
   -- , containers           ^>=0.8
@@ -197,7 +200,7 @@ test-suite websites-test
   -- , hspec-expectations ^>=0.8.4
   -- , mtl                  ^>=2.3.1
   -- , process ^>=1.6.25
-  -- , QuickCheck ^>=2.17
+  -- , QuickCheck ^>=2.18
   -- , random ^>=1.3
   -- , vector ^>=0.13.2
   build-tool-depends: hspec-discover:hspec-discover
@@ -213,4 +216,4 @@ benchmark websites-bench
   build-depends:
     , base       ^>=4.22
     , criterion  ^>=1.6.4
-    , websites   ^>=0.2
+    , websites   ^>=1.0

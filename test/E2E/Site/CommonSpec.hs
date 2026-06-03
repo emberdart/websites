@@ -275,7 +275,7 @@ wdSessionForConfig configName website = do
 
     liftIO . TIO.putStrLn $ "Testing for each resolution"
 
-    traverse_ (\res -> testForResolution res ((website ^. slug . to NE.getNonEmpty) == "jolharg")) resolutions
+    traverse_ (\res -> testForResolution res ((website ^. slug . to NE.getNonEmpty) == "portfolio")) resolutions
 
     -- only the first option - we don't need the following duplicated
     when ("Firefox" == configName) $ do
