@@ -4,7 +4,7 @@ trap pwd ERR
 
 siteupdate() {
     git add .
-    git commit -m 'Site update'
+    git commit -m 'Site update' || echo nah
     git push
 }
 
