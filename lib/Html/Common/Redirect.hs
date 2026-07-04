@@ -20,6 +20,6 @@ pageRedirect path' = do
             H.h1 $ text "Moved"
             H.p $ do
                 text "This page has moved. It can be found at "
-                H.a ! A.href (toValue $ (show pageUrl' <> "/" <> path')) $ do
-                    string $ (show pageUrl' <> "/" <> path')
+                H.a ! A.href (toValue $ show pageUrl' <> "/" <> path') $ do
+                    string $ show pageUrl' <> "/" <> path'
                 text ". Please update your bookmarks. You are being redirected now."
