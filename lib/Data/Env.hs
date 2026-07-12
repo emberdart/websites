@@ -41,7 +41,7 @@ prodBlogPersonal,
 prodBlogPersonal = Website {
     _slug = NE.trustedNonEmpty "blogpersonal",
     _redirectSlugs = [NE.trustedNonEmpty "blogdead"],
-    _title = NE.trustedNonEmpty "Ember Dart's Blog: Software, Mathematics, HamRadio, Music",
+    _title = NE.trustedNonEmpty "Ember Dart's Blog: Software, Mathematics, Ham Radio, Music",
     {- _keywords = [
         "ember",
         "dart",
@@ -89,7 +89,7 @@ prodBlogPersonal = Website {
     _urls = productionUrls,
     _breadcrumb = Breadcrumb [(NE.trustedNonEmpty "Blog", Nothing)],
     _siteType = Blog {
-        _atomTitle = NE.trustedNonEmpty "Ember Dart's Blog: Software, Maths, HamRadio, Music",
+        _atomTitle = NE.trustedNonEmpty "Ember Dart's Blog: Software, Maths, Ham Radio, Music",
         _atomUrl = [relativeReference|/atom.xml|],
         _renderSuffix = mempty
     },
@@ -101,7 +101,7 @@ prodBlogPersonal = Website {
 prodPersonal = Website {
     _slug = NE.trustedNonEmpty "personal",
     _redirectSlugs = [NE.trustedNonEmpty "deadsite"],
-    _title = NE.trustedNonEmpty "Ember Dart: Software, Maths, HamRadio, Music",
+    _title = NE.trustedNonEmpty "Ember Dart: Software, Maths, Ham Radio, Music",
     {- _keywords = [
         "ember",
         "dart",
@@ -334,7 +334,7 @@ prodHamRadio = Website {
 prodBlogHamRadio = Website {
     _slug = NE.trustedNonEmpty "bloghamradio",
     _redirectSlugs = [],
-    _title = NE.trustedNonEmpty "The Blog of M0ORI: Interesting HamRadio Observations",
+    _title = NE.trustedNonEmpty "The Blog of M0ORI: Interesting Ham Radio Observations",
     _description = NE.trustedNonEmpty "My radio blog covers interesting observations I have had whilst working on ham bands.",
     _previewImgUrl = [relativeReference|/img/preview.png|],
     _baseUrl = productionUrls ^. urlBlogHamRadio,
@@ -343,7 +343,7 @@ prodBlogHamRadio = Website {
     _urls = productionUrls,
     _breadcrumb = Breadcrumb [(NE.trustedNonEmpty "M0ORI Blog", Nothing)],
     _siteType = Blog {
-        _atomTitle = NE.trustedNonEmpty "The Blog of M0ORI: Interesting HamRadio Observations",
+        _atomTitle = NE.trustedNonEmpty "The Blog of M0ORI: Interesting Ham Radio Observations",
         _atomUrl = [relativeReference|/atom.xml|],
         _renderSuffix = mempty
     },
