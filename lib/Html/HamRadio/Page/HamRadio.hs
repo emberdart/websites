@@ -12,7 +12,7 @@ import Text.Blaze.Html5.Attributes as A
 
 pageHamRadio ∷ MonadReader Website m ⇒ m Html
 pageHamRadio = plainBreadcrumb (NE.trustedNonEmpty "Ham Radio") . makePage "ham" "Ham Radio" defaultLayout defaultPage $ do
-    p "I am a UK full-licenced radio amateur, and have been issued the callsign HamRadio."
+    p "I am a UK full-licenced radio amateur, and have been issued the callsign M0ORI."
     p $ do
         "My nearest radio club is Exeter Amateur Radio Society."
     p $ do
