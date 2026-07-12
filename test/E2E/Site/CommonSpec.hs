@@ -2,6 +2,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes     #-}
 {-# LANGUAGE UnicodeSyntax     #-}
+{-# OPTIONS_GHC -Wwarn #-}
 
 module E2E.Site.CommonSpec where
 
@@ -10,8 +11,9 @@ import Control.Exception
 import Control.Lens
 import Control.Monad
 import Control.Monad.IO.Class
+import Control.Monad.Logger
 -- import Control.Monad.Reader
-import Data.Aeson
+-- import Data.Aeson
 import Data.Env                  as Env
 import Data.Env.Types            as Env
 import Data.Foldable
@@ -23,6 +25,7 @@ import Data.NonEmpty             qualified as NE
 import Data.Text                 (Text)
 import Data.Text                 qualified as T
 import Data.Text.IO              qualified as TIO
+-- import GHC.Stack
 import Network.HTTP.Client
 import Network.HTTP.Client.TLS
 import Network.HTTP.Types.Status
@@ -38,18 +41,19 @@ import Test.WebDriver
 -- import Test.WebDriver.Class
 -- import Test.WebDriver.Config
 -- import Test.WebDriver.Monad
-import Test.WebDriverWrapper
+-- import Test.WebDriverWrapper
 import Witherable
+import Test.WebDriver.WD
+import Text.Printf
+import Control.Concurrent
 
-firefoxConfig ∷ WDConfig
-firefoxConfig = defaultConfig {
-    wdCapabilities = defaultCaps {
-        additionalCaps = [
-            ("moz:firefoxOptions", object [
-                ("args", Array [String "--headless"])
-            ])
-        ]
-    }
+firefoxConfig ∷ DriverConfig
+firefoxConfig = DriverConfigGeckodriver {
+    driverConfigGeckodriver = "geckodriver",
+    driverConfigGeckodriverFlags = [],
+    driverConfigGeckodriverExtraEnv = Nothing,
+    driverConfigFirefox = "firefox",
+    driverConfigLogDir = Nothing
 }
 
 -- chromeConfig ∷ WDConfig
@@ -70,17 +74,18 @@ showResolution (a, b) = show a <> "x" <> show b
 resolutions ∷ [(Word, Word)]
 resolutions = [
     -- we can't go below cards that are 438x382 etc in Firefox without some looking up... - let's not worry for now I suppose...
-    (320, 480), -- smallest common portrait mobile -- ??? breaks rm? too big for it?
-    (360, 480),
-    (360, 780), -- #6 portrait mobile
-    (360, 800), -- #1 portrait mobile
-    (390, 844), -- #2 portrait mobile
-    (393, 873), -- #3 portrait mobile
-    (412, 915), -- #4 portrait mobile
-    (414, 896), -- #5 portrait mobile
-    (480, 320), -- smallest common landscape mobile
-    (480, 360),
-    (480, 720),
+    -- e.g. in 320x480, we get 382x500...
+    -- (320, 480), -- smallest common portrait mobile -- ??? breaks rm? too big for it?
+    -- (360, 480),
+    -- (360, 780), -- #6 portrait mobile
+    -- (360, 800), -- #1 portrait mobile
+    -- (390, 844), -- #2 portrait mobile
+    -- (393, 873), -- #3 portrait mobile
+    -- (412, 915), -- #4 portrait mobile
+    -- (414, 896), -- #5 portrait mobile
+    -- (480, 320), -- smallest common landscape mobile
+    -- (480, 360),
+    -- (480, 720),
     (601, 952), -- #6 portrait tablet
     (720, 480),
     (720, 1280),
@@ -114,18 +119,26 @@ resolutions = [
     (5120, 2880) -- biggest common desktop
     ]
 
-configs ∷ [(Text, WDConfig)]
+configs ∷ [(Text, DriverConfig)]
 configs = [
     ("Firefox", firefoxConfig)
     -- ("Chrome", chromeConfig)
     ]
 
+elemSize :: Element -> WD (Float, Float)
+elemSize el = do
+    Rect _ _ w h <- elemRect el
+    pure (w, h)
+
+setWindowSize :: (Word, Word) -> WD ()
+setWindowSize (w, h) = setWindowRect $ Rect 0 0 (fromIntegral w) (fromIntegral h)
+
 -- in terms of safeTry / try?
 ioDef ∷ a → IO a → IO a
 ioDef d io = either (\(SomeException _) -> d) id <$> try io
 
-testForLink ∷ Element -> WD ()
-testForLink linkToClick = do
+testForLink ∷ (Word, Word) ->Element -> WD ()
+testForLink (width, height) linkToClick = do
     linkName <- getText linkToClick
     cardSizes <- fmap (bimap (round :: Float → Int) (round :: Float → Int)) <$> do
         click linkToClick
@@ -139,7 +152,7 @@ testForLink linkToClick = do
 
     liftIO . TIO.putStrLn . T.show $ cardSizes
 
-    liftIO . hspec . describe (T.unpack linkName) . it "visible cards are only one size" $ (
+    liftIO . hspec . describe (showResolution (width, height)) .  describe (T.unpack linkName) . it "visible cards are only one size" $ (
         (length . L.nub . filter (/= (0, 0)) $ cardSizes ) `shouldSatisfy` (< 2))
 
 testForResolution ∷ (Word, Word) → Bool -> WD ()
@@ -157,9 +170,9 @@ testForResolution winSize@(width, height) testCards = do
             $ (navHeight `shouldBe` 40)
 
     when testCards $ do
-        liftIO . putStrLn $ "would test cards but this is slightly broken"
-        --  links <- findElems $ ByCSS ".navbar-nav label a"
-        -- traverse_ testForLink links
+        -- liftIO . putStrLn $ "would test cards but this is slightly broken"
+        links <- findElems $ ByCSS ".navbar-nav label a"
+        traverse_ (testForLink (width, height)) links
 
 testHTTPSLink ∷ URI → Spec
 testHTTPSLink src = describe (show src) .
@@ -177,17 +190,36 @@ testSecureLink (src, target', rel') = describe (show src) $ do
     it "has rel noreferrer" $ -- implies noopener
         rel' `shouldBe` Just "noreferrer"
 
+defaultRetries :: Int
+defaultRetries = 3
 
-getStatuses ∷ Manager → URI → IO (URI, Int)
-getStatuses manager url' = ioDef (url', 0) $ do
+retryStatuses :: [Int]
+retryStatuses = [
+    0,
+    408,
+    429,
+    500,
+    502,
+    503,
+    504
+    ]
+
+getStatuses ∷ Manager → Int ->URI →  IO (URI, Int)
+getStatuses manager retries url' = ioDef (url', 0) $ do
     request <- requestFromURI url'
     let req' = request {
         requestHeaders = [
-            ("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0")
+            ("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:152.0) Gecko/20100101 Firefox/152.0")
         ]
     }
     response <- httpLbs req' manager
-    pure (url', statusCode . responseStatus $ response)
+    let statusCode' = statusCode . responseStatus $ response
+    if statusCode' `elem` retryStatuses && retries > 0 then do
+        printf "Should retry. Trying again in %d... (try %d)" (5 :: Int) retries
+        threadDelay 5_000_000
+        getStatuses manager (retries - 1) url'
+    else
+        pure (url', statusCode')
 
 insecureExceptions ∷ [URI]
 insecureExceptions = [
@@ -200,6 +232,10 @@ insecureExceptions = [
 brokenExceptions ∷ [URI]
 brokenExceptions = [
     [uri|https://canddi.com|], -- resolves to 0.0.0.0 with adguard
+    [uri|https://github.com/danwdart|], -- wrong one!
+    [uri|https://github.com/danwdart/|], -- wrong one!
+    [uri|https://www.ancestry.co.uk/|], -- 403s for some reason
+    [uri|https://openbsd.org/|], -- idfk but it redirs
     [uri|https://www.linuxvoice.com/category/podcasts/|], -- self-signed certificate
     [uri|https://upload.wikimedia.org/wikipedia/commons/6/6a/JavaScript-logo.png|],
     [uri|https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Antu_bash.svg/512px-Antu_bash.svg.png|],
@@ -213,6 +249,7 @@ brokenExceptions = [
     [uri|https://draft.blogger.com/profile/03812351582147993701|],
     [uri|https://draft.blogger.com/profile/15493119212604094040|],
     [uri|https://draft.blogger.com/profile/03017160325987430398|],
+    [uri|https://blocked-for-spam.com|], -- default user url for comments when they're spam
     [uri|https://blocked-for-spam.com/|], -- default user url for comments when they're spam
     [uri|http://xn--101-8cd4f0b.xn--p1ai/user/mouseriver12/|], -- some user's url which is only http
     [uri|https://web.archive.org/web/20090211204719/https://www.pcworld.com/article/129977/how_to_reinstall_windows_xp.html|], -- no idea why
@@ -232,14 +269,51 @@ brokenExceptions = [
     [uri|https://web.archive.org/web/20170306223801/https://projectchaplin.com/login|],
     [uri|https://web.archive.org/web/20110514221602/http://www.securityfocus.com/vulnerabilities|],
     [uri|https://web.archive.org/web/20210302104446/https://enucuzatakipcial.com/|],
+    [uri|https://www.deepburner.com|], -- ????
     [uri|https://www.deepburner.com/|], -- ????
-    [uri|https://www.linkedin.com/in/dandart|], -- why 999???
+    [uri|https://www.linkedin.com/in/emberdart|], -- why 999???
     [uri|https://viewex.co.uk/|], -- either no longer active or blocked
     [uri|https://cloudbanter.com/|], -- either no longer active or blocked
     [uri|https://docs.dadi.cloud/|], -- either no longer active or blocked
     [uri|https://www.soampli.com/|], -- it's fine though???
-    [uri|https://themadhacker.net/|], -- ????
-    [uri|https://letsencrypt.org/|] -- ?????????????????
+    [uri|https://themadhacker.net/|], -- ?????
+    [uri|https://yanderedarling.com/|], -- bot block?
+    [uri|https://www.imdb.com/user/ur81806610|], -- 202?
+    [uri|https://www.npmjs.com/~dandart|], -- 403?
+    [uri|https://yanderehiro.tumblr.com/|], -- 403?
+    [uri|https://www.last.fm/user/dandart|], -- 600????????
+    [uri|https://letsencrypt.org/|], -- ?????????????????
+    [uri|https://www.dragonflybsd.org/features/|], -- ridiculously slow today
+    [uri|https://www.gnu.org/licenses/gpl-2.0.html|], -- slow
+    [uri|https://themadhacker.net|], -- idk why it zeroes
+    [uri|https://github.com/emberdart/vinski2.git|], -- these i have no idea
+    [uri|https://github.com/emberdart/jolharg-theme.git|],
+    [uri|https://github.com/emberdart/gpt4free.git|],
+    [uri|https://github.com/emberdart/Bibud.git|],
+    [uri|https://github.com/emberdart/widgeter.git|],
+    [uri|https://github.com/emberdart/xenon.git|],
+    [uri|https://github.com/emberdart/todoapp.git|],
+    [uri|https://github.com/emberdart/scrapeda.git|],
+    [uri|https://github.com/emberdart/dockers.git|],
+    [uri|https://github.com/emberdart/req.git|],
+    [uri|https://github.com/emberdart/humblr.git|],
+    [uri|https://github.com/emberdart/call-stack.git|],
+    [uri|https://github.com/emberdart/aeson.git|],
+    [uri|https://github.com/emberdart/ShareAV.git|],
+    [uri|https://github.com/emberdart/zetabud.git|],
+    [uri|https://github.com/emberdart/distruck.git|],
+    [uri|https://github.com/emberdart/sesite.git|],
+    [uri|https://github.com/emberdart/amqp.git|],
+    [uri|https://github.com/emberdart/form.git|],
+    [uri|https://github.com/emberdart/multiorm.git|],
+    [uri|https://github.com/emberdart/php-async.git|],
+    [uri|https://github.com/emberdart/winspy.git|],
+    [uri|https://github.com/emberdart/sevb.git|],
+    [uri|https://github.com/emberdart/rflvb.git|],
+    [uri|https://github.com/emberdart/scalr-phonegap.git|],
+    [uri|https://github.com/emberdart/movesic.git|],
+    [uri|https://github.com/emberdart/fps.git|],
+    [uri|https://www.qrzcq.com/call/M0ORI|] -- ???
     ]
 
 testNotBroken ∷ (URI, Int) → Spec
@@ -261,15 +335,17 @@ testHasAltAndTitle (url, altText, title') = describe (show url) $ do
         title' `shouldNotBe` Nothing
         title' `shouldNotBe` Just ""
 
-wdSessionForConfig :: Text -> Website -> WD ()
+wdSessionForConfig :: HasCallStack => Text -> Website -> WD ()
 wdSessionForConfig configName website = do
     liftIO . TIO.putStrLn $ "Opening page"
     setPageLoadTimeout 5000
 
-    liftIO . TIO.putStrLn $ "Opening page and waiting for it to load..."
+    let url = website ^. baseUrl . to show . to T.pack . to (T.replace "https://" "https://dev.")
+
+    liftIO . TIO.putStrLn $ "Opening page " <> url <> " and waiting for it to load..."
 
     -- Open the dev only pages
-    openPage $ website ^. baseUrl . to show . to T.pack . to (T.replace "https://" "https://dev.") . to T.unpack
+    openPage $ T.unpack url
 
     liftIO . TIO.putStrLn $ "Opened page"
 
@@ -357,19 +433,19 @@ wdSessionForConfig configName website = do
 
         liftIO . TIO.putStrLn $ "Getting internal link statuses"
 
-        internalLinkStatuses <- liftIO $ mapConcurrently (getStatuses manager) internalLinks
+        internalLinkStatuses <- liftIO $ mapConcurrently (getStatuses manager defaultRetries) (L.nub internalLinks)
 
         liftIO . TIO.putStrLn $ "Getting external link statuses"
 
-        externalLinkStatuses <- liftIO $ mapConcurrently (getStatuses manager) ((\(uri', _, _) -> uri') <$> externalLinks)
+        externalLinkStatuses <- liftIO $ mapConcurrently (getStatuses manager defaultRetries) (L.nub ((\(uri', _, _) -> uri') <$> externalLinks))
 
         liftIO . TIO.putStrLn $ "Getting internal image statuses"
 
-        internalImageStatuses <- liftIO $ mapConcurrently (getStatuses manager) (fmap (\(uri', _, _) -> uri') internalImages)
+        internalImageStatuses <- liftIO $ mapConcurrently (getStatuses manager defaultRetries) (L.nub (fmap (\(uri', _, _) -> uri') (internalImages)))
 
         liftIO . TIO.putStrLn $ "Getting external image statuses"
 
-        externalImageStatuses <- liftIO $ mapConcurrently (getStatuses manager) (fmap (\(uri', _, _) -> uri') externalImages)
+        externalImageStatuses <- liftIO $ mapConcurrently (getStatuses manager defaultRetries) (L.nub (fmap (\(uri', _, _) -> uri') externalImages))
 
         liftIO . TIO.putStrLn $ "Performing tests"
 
@@ -384,11 +460,18 @@ wdSessionForConfig configName website = do
             describe "has no altless or titleless external images" $ traverse_ testHasAltAndTitle externalImages
         
 
-spec ∷ Spec
+spec ∷ HasCallStack => Spec
 spec = runIO . hspec $ traverse_ (\website ->
     describe (T.unpack (website ^. slug . to NE.getNonEmpty)) $
         traverse_ (\(configName, config) ->
-            describe (T.unpack configName) .
-                runIO . wrappedRunSession config . finallyClose $ wdSessionForConfig configName website 
+            describe (T.unpack configName) . runIO $ do
+                bracket mkEmptyWebDriverContext (runStdoutLoggingT . teardownWebDriverContext) $ \ctx -> runStdoutLoggingT $ do
+                    session <- startSession ctx config defaultCaps (T.unpack configName)
+    -- . wrappedRunSession config . finallyClose $ wdSessionForConfig configName website 
+                    runWD session (wdSessionForConfig configName website)
+                    closeSession ctx session
         ) configs
     ) production
+-- todo check rss
+-- todo check redirs
+-- todo check sitemaps
