@@ -19,7 +19,7 @@ socialIcons = do
         socialIconS ("mailto:" <> textValue (TE.decodeUtf8Lenient (toByteString email'))) "Email" "envelope"
         socialIconB "https://github.com/emberdart" "GitHub" "github"
         socialIconB "https://www.imdb.com/user/ur81806610" "ImDB" "imdb"
-        socialIconB "https://www.last.fm/user/Personal" "Last.fm" "lastfm"
+        socialIconB "https://www.last.fm/user/dandart" "Last.fm" "lastfm"
         socialIconB "https://www.linkedin.com/in/emberdart" "LinkedIn" "linkedin"
         socialIconB "https://www.npmjs.com/~dandart" "npm" "npm"
         socialIconB "https://www.reddit.com/user/jolharg" "Reddit" "reddit"
