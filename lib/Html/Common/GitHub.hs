@@ -42,7 +42,7 @@ data Language = LangASM
 
 languageToURI :: Language -> URI
 languageToURI = \case
-    LangASM -> [uri|https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Motorola_6800_Assembly_Language.png/800px-Motorola_6800_Assembly_Language.png|]
+    LangASM -> [uri|https://i.pinimg.com/originals/25/a8/5d/25a85d9e5057430d82273a3c75e73014.png|]
     LangBlitzBasic -> [uri|https://upload.wikimedia.org/wikipedia/en/6/65/BlitzBasicLogo.gif|]
     LangC -> [uri|https://upload.wikimedia.org/wikipedia/commons/3/3b/C.sh-600x600.png|]
     LangCoffee -> [uri|https://farm8.staticflickr.com/7212/7168325292_16a46a1fea_n.jpg|]
