@@ -27,6 +27,7 @@ mkShell rec {
     packages = [
         haskell.compiler.ghc914
         cabal-install
+        geckodriver
         openjdk17-bootstrap
         # krank
         pkg-config
