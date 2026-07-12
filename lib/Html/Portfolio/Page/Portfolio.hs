@@ -42,13 +42,13 @@ pagePortfolio = do
             card "img/faultfixers.png" "FaultFixers" "Facilities management" "https://faultfixers.com"
             -- https://dadi.cloud/en/ is currently broken
             card "img/dadi.png" "DADI" "DADI web services suite" "https://docs.dadi.cloud/"
-            card "img/planetradio.png" "Planet HamRadio" "Collection of UK radio magazine websites" "https://planetradio.co.uk/"
+            card "img/planetradio.png" "Planet Radio" "Collection of UK radio magazine websites" "https://planetradio.co.uk/"
             card "img/kompli.png" "Kompli Global" "Due diligence and search intelligence" "https://kompli-global.com"
             card "img/cloudbanter.png" "Cloudbanter" "Mobile operator messaging system" "https://cloudbanter.com/"
             card "img/reviverest.png" "Revive Ad server REST API" "RESTful API for Open source ad server" "https://www.reviveadserverrestapi.com/"
             cardDefunct "ThemeAttic" "Inventors' search platform"
             card "img/soampli.png" "SoAmpli" "Social media amplification" "https://www.soampli.com/"
-            card "img/viewex.png" "Viewex" "Advertising revenue optimisation" "https://viewex.co.uk"
+            cardDefunct "Viewex" "Advertising revenue optimisation"
             card "img/canddi.png" "CANDDi" "Smart web analytics" "https://canddi.com"
             card "img/mobilefun.png" "Mobile Fun" "Web shop for phones and accessories" "https://mobilefun.co.uk"
             -- gamingzap now redirects to mobilefun
