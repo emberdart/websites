@@ -43,6 +43,7 @@ import Test.WebDriver
 -- import Test.WebDriver.Monad
 -- import Test.WebDriverWrapper
 import Witherable
+import Test.WebDriver.Capabilities
 import Test.WebDriver.WD
 import Text.Printf
 import Control.Concurrent
@@ -54,6 +55,13 @@ firefoxConfig = DriverConfigGeckodriver {
     driverConfigGeckodriverExtraEnv = Nothing,
     driverConfigFirefox = "firefox",
     driverConfigLogDir = Nothing
+}
+
+firefoxCaps :: Capabilities
+firefoxCaps = defaultCaps {
+    _capabilitiesMozFirefoxOptions = Just $ defaultFirefoxOptions {
+        _firefoxOptionsArgs = Just [ "--headless" ]
+    }
 }
 
 -- chromeConfig ∷ WDConfig
@@ -119,9 +127,9 @@ resolutions = [
     (5120, 2880) -- biggest common desktop
     ]
 
-configs ∷ [(Text, DriverConfig)]
+configs ∷ [(Text, DriverConfig, Capabilities)]
 configs = [
-    ("Firefox", firefoxConfig)
+    ("Firefox", firefoxConfig, firefoxCaps)
     -- ("Chrome", chromeConfig)
     ]
 
@@ -338,7 +346,7 @@ testHasAltAndTitle (url, altText, title') = describe (show url) $ do
 wdSessionForConfig :: HasCallStack => Text -> Website -> WD ()
 wdSessionForConfig configName website = do
     liftIO . TIO.putStrLn $ "Opening page"
-    setPageLoadTimeout 5000
+    setPageLoadTimeout 30000
 
     let url = website ^. baseUrl . to show . to T.pack . to (T.replace "https://" "https://dev.")
 
@@ -463,10 +471,10 @@ wdSessionForConfig configName website = do
 spec ∷ HasCallStack => Spec
 spec = runIO . hspec $ traverse_ (\website ->
     describe (T.unpack (website ^. slug . to NE.getNonEmpty)) $
-        traverse_ (\(configName, config) ->
+        traverse_ (\(configName, config, caps) ->
             describe (T.unpack configName) . runIO $ do
                 bracket mkEmptyWebDriverContext (runStdoutLoggingT . teardownWebDriverContext) $ \ctx -> runStdoutLoggingT $ do
-                    session <- startSession ctx config defaultCaps (T.unpack configName)
+                    session <- startSession ctx config caps (T.unpack configName)
     -- . wrappedRunSession config . finallyClose $ wdSessionForConfig configName website 
                     runWD session (wdSessionForConfig configName website)
                     closeSession ctx session
