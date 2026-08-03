@@ -23,7 +23,7 @@ commonCSS = do
     link ! rel "author" ! type_ "text/plain" ! href "/humans.txt"
     extCSS "https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" "sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
     css "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-    css "https://fonts.googleapis.com/css?family=Caudex"
+    -- css "https://fonts.googleapis.com/css?family=Caudex"
     css "https://fonts.googleapis.com/css?family=Lexend+Deca"
     css "/css/common-theme.css"
     css "/css/style.css"
