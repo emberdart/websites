@@ -25,11 +25,13 @@ import Data.NonEmpty             qualified as NE
 import Data.Text                 (Text)
 import Data.Text                 qualified as T
 import Data.Text.IO              qualified as TIO
+import Data.Traversable
 -- import GHC.Stack
 import Network.HTTP.Client
 import Network.HTTP.Client.TLS
 import Network.HTTP.Types.Status
 import Network.URI
+import Network.URI.Lens
 import Network.URI.Static
 import Prelude                   hiding (filter)
 -- import System.Environment
@@ -321,7 +323,9 @@ brokenExceptions = [
     [uri|https://github.com/emberdart/scalr-phonegap.git|],
     [uri|https://github.com/emberdart/movesic.git|],
     [uri|https://github.com/emberdart/fps.git|],
-    [uri|https://www.qrzcq.com/call/M0ORI|] -- ???
+    [uri|https://www.qrzcq.com/call/M0ORI|], -- ???
+    [uri|https://creativecommons.org/|], -- 403 because human verification
+    [uri|https://stackoverflow.com/users/1764563/dan-dart|] -- another 403
     ]
 
 testNotBroken ∷ (URI, Int) → Spec
@@ -359,79 +363,118 @@ wdSessionForConfig configName website = do
 
     liftIO . TIO.putStrLn $ "Testing for each resolution"
 
-    traverse_ (\res -> testForResolution res ((website ^. slug . to NE.getNonEmpty) == "portfolio")) resolutions
+    for_ resolutions $ \res -> testForResolution res ((website ^. slug . to NE.getNonEmpty) == "portfolio")
 
     -- only the first option - we don't need the following duplicated
     when ("Firefox" == configName) $ do
         internalLinks <- do
             liftIO . TIO.putStrLn $ "Finding internal links"
-            as <- findElems (ByCSS "a[href^='/']")
+            elements' <- findElems (ByCSS "a[href^='/']")
             liftIO . TIO.putStrLn $ "Going through internal links"
-            hrefs <- traverse (\x -> do
-                href' <- x `attr` "href"
+            hrefs <- for elements' $ \element' -> do
+                href' <- element' `attr` "href"
                 -- liftIO . TIO.putStrLn $ "Internal link href is " <> T.show href'
                 -- let hrefS' = T.unpack <$> href'
                 -- For some reason, getting the href will just get the absolute uri, so no messing about.
                 -- let ref' = parseRelativeReference =<< hrefS'
                 -- let uri' = flip relativeTo (website ^. baseUrl) <$> ref'
                 -- liftIO . TIO.putStrLn $ "Absoluted link href is " <> T.show uri'
-                let uri' = parseURI . T.unpack =<< href'
-                pure uri'
-                ) as
+                let uri' = parseRelativeReference . T.unpack =<< href'
+                pure $ relativeTo <$> uri' <*> Just (website ^. baseUrl)
             pure (catMaybes hrefs)
 
         liftIO . TIO.putStrLn $ "Found " <> T.show (length internalLinks) <> " urls."
 
         externalLinks <- do
             liftIO . TIO.putStrLn $ "Finding external links"
-            as <- findElems (ByCSS "a[href^=http]")
+            elements' <- findElems (ByCSS "a[href^=http]")
             liftIO . TIO.putStrLn $ "Going through external links"
-            hrefs <- traverse (\x -> do
-                href' <- x `attr` "href"
-                target' <- x `attr` "target"
-                rel' <- x `attr` "rel"
+            hrefs <- for elements' $ \element' -> do
+                href' <- element' `attr` "href"
+                target' <- element' `attr` "target"
+                rel' <- element' `attr` "rel"
                 -- liftIO . TIO.putStrLn $ "External link href is " <> T.show href'
                 let uri' = parseURI . T.unpack =<< href'
                 pure (uri', target', rel')
-                ) as
             pure $ mapMaybe (\(ma, mb, mc) -> case ma of Just a -> Just (a, mb, mc); Nothing -> Nothing) hrefs
 
         liftIO . TIO.putStrLn $ "Found " <> T.show (length externalLinks) <> " urls."
 
         internalImages <- do
-            as <- findElems (ByCSS "img[src^='/']")
+            elements' <- findElems (ByCSS "img[src^='/']")
             liftIO . TIO.putStrLn $ "Going through internal images"
-            imgs <- traverse (\x -> do
-                src' <- x `attr` "src"
+            imgs <- for elements' $ \element' -> do
+                src' <- element' `attr` "src"
                 -- liftIO . TIO.putStrLn $ "Internal img src is " <> T.show src'
-                alt' <- x `attr` "alt"
-                title' <- x `attr` "title"
+                alt' <- element' `attr` "alt"
+                title' <- element' `attr` "title"
                 -- liftIO . TIO.putStrLn $ "Internal img alt is " <> T.show alt'
                 -- Same with imgs
                 -- let srcS' = T.unpack <$> src'
                 -- let ref' = parseRelativeReference =<< srcS'
                 -- let uri' = flip relativeTo (website ^. baseUrl) <$> ref'
                 -- liftIO . TIO.putStrLn $ "Absoluted img src is " <> T.show uri'
-                let uri' = parseURI . T.unpack =<< src'
-                pure (uri', alt', title')
-                ) as
+                let uri' = parseRelativeReference . T.unpack =<< src'
+                pure (relativeTo <$> uri' <*> (Just (over (uriAuthorityLens . mapped . uriRegNameLens) ("dev." <>) (website ^. baseUrl))), alt', title')
             pure $ mapMaybe (\(ma, mb, mc) -> case ma of Just a -> Just (a, mb, mc); Nothing -> Nothing) imgs
 
         liftIO . TIO.putStrLn $ "Found " <> T.show (length internalImages) <> " images."
 
         externalImages <- do
-            as <- findElems (ByCSS "img[src^=http]")
+            elements' <- findElems (ByCSS "img[src^=http]")
             liftIO . TIO.putStrLn $ "Going through external images"
-            imgs <- traverse (\x -> do
-                src' <- x `attr` "src"
+            imgs <- for elements' $ \element' -> do
+                src' <- element' `attr` "src"
                 -- liftIO . TIO.putStrLn $ "External img src is " <> T.show src'
-                alt' <- x `attr` "alt"
-                title' <- x `attr` "title"
+                alt' <- element' `attr` "alt"
+                title' <- element' `attr` "title"
                 -- liftIO . TIO.putStrLn $ "External img alt is " <> T.show alt'
                 let uri' = parseURI . T.unpack =<< src'
                 pure (uri', alt', title')
-                ) as
             pure $ mapMaybe (\(ma, mb, mc) -> case ma of Just a -> Just (a, mb, mc); Nothing -> Nothing) imgs
+        
+        liftIO . TIO.putStrLn $ "Found " <> T.show (length externalImages) <> " external images."
+
+        internalReferences <- catMaybes <$> do
+            elements' <- findElems (ByCSS "[content^='/']") :: WD [Element]
+            liftIO . TIO.putStrLn $ "Going through internal references"
+            for elements' $ \element' -> do
+                content' <- element' `attr` "content"
+                -- liftIO . TIO.putStrLn $ "********* Internal reference content is " <> T.show content'
+                let uri' = parseRelativeReference =<< fmap T.unpack content'
+                pure $ relativeTo <$> uri' <*> Just (over (uriAuthorityLens . mapped . uriRegNameLens) ("dev." <>) (website ^. baseUrl))
+                
+        liftIO . TIO.putStrLn $ "Found " <> T.show (length internalReferences) <> " internal references."
+
+        externalReferences <- catMaybes <$> do
+            elements' <- findElems (ByCSS "[content^=http]") :: WD [Element]
+            liftIO . TIO.putStrLn $ "Going through external references"
+            for elements' $ \element' -> do
+                content' <- element' `attr` "content"
+                pure $ parseURI =<< fmap T.unpack content'
+
+        liftIO . TIO.putStrLn $ "Found " <> T.show (length externalReferences) <> " external references."
+        
+        internalMetaLinks <- catMaybes <$> do
+            elements' <- findElems (ByCSS "link[href^='/']") :: WD [Element]
+            liftIO . TIO.putStrLn $ "Going through internal meta links"
+            for elements' $ \element' -> do
+                href' <- element' `attr` "href"
+                -- liftIO . TIO.putStrLn $ "********* Internal meta link href is " <> T.show href'
+                let uri' = parseRelativeReference =<< fmap T.unpack href'
+                pure $ relativeTo <$> uri' <*> Just (over (uriAuthorityLens . mapped . uriRegNameLens) ("dev." <>) (website ^. baseUrl))
+                
+        liftIO . TIO.putStrLn $ "Found " <> T.show (length internalReferences) <> " internal meta links."
+
+        externalMetaLinks <- catMaybes <$> do
+            elements' <- findElems (ByCSS "link[href^=http]") :: WD [Element]
+            liftIO . TIO.putStrLn $ "Going through external meta links"
+            for elements' $ \element' -> do
+                href' <- element' `attr` "href"
+                pure $ parseURI =<< fmap T.unpack href'
+
+        liftIO . TIO.putStrLn $ "Found " <> T.show (length externalReferences) <> " external meta links."
+        
 
         liftIO . TIO.putStrLn $ "Found " <> T.show (length externalImages) <> " images."
 
@@ -449,11 +492,27 @@ wdSessionForConfig configName website = do
 
         liftIO . TIO.putStrLn $ "Getting internal image statuses"
 
-        internalImageStatuses <- liftIO $ mapConcurrently (getStatuses manager defaultRetries) (L.nub (fmap (\(uri', _, _) -> uri') (internalImages)))
+        internalImageStatuses <- liftIO $ mapConcurrently (getStatuses manager defaultRetries) (L.nub (fmap (\(uri', _, _) -> uri') internalImages))
 
         liftIO . TIO.putStrLn $ "Getting external image statuses"
 
         externalImageStatuses <- liftIO $ mapConcurrently (getStatuses manager defaultRetries) (L.nub (fmap (\(uri', _, _) -> uri') externalImages))
+
+        liftIO . TIO.putStrLn $ "Getting internal reference statuses"
+
+        internalReferenceStatuses <- liftIO $ mapConcurrently (getStatuses manager defaultRetries) (L.nub internalReferences)
+
+        liftIO . TIO.putStrLn $ "Getting external reference statuses"
+
+        externalReferenceStatuses <- liftIO $ mapConcurrently (getStatuses manager defaultRetries) (L.nub externalReferences)
+
+        liftIO . TIO.putStrLn $ "Getting internal meta link statuses"
+
+        internalMetaLinkStatuses <- liftIO $ mapConcurrently (getStatuses manager defaultRetries) (L.nub internalMetaLinks)
+
+        liftIO . TIO.putStrLn $ "Getting external meta link statuses"
+
+        externalMetaLinkStatuses <- liftIO $ mapConcurrently (getStatuses manager defaultRetries) (L.nub externalMetaLinks)
 
         liftIO . TIO.putStrLn $ "Performing tests"
 
@@ -462,6 +521,10 @@ wdSessionForConfig configName website = do
             describe "has no insecure links" $ traverse_ testSecureLink externalLinks
             describe "has no broken internal links" $ traverse_ testNotBroken internalLinkStatuses
             describe "has no broken external links" $ traverse_ testNotBroken externalLinkStatuses
+            describe "has no broken internal references" $ traverse_ testNotBroken internalReferenceStatuses
+            describe "has no broken external references" $ traverse_ testNotBroken externalReferenceStatuses
+            describe "has no broken internal meta links" $ traverse_ testNotBroken internalMetaLinkStatuses
+            describe "has no broken external meta links" $ traverse_ testNotBroken externalMetaLinkStatuses
             describe "has no broken internal images" $ traverse_ testNotBroken internalImageStatuses
             describe "has no altless or titleless internal images" $ traverse_ testHasAltAndTitle internalImages
             describe "has no broken external images" $ traverse_ testNotBroken externalImageStatuses
