@@ -40,6 +40,7 @@ import Html.Common.Blog.Types        qualified as BlogTypes
 import Html.Common.Redirect
 import Make
 import Network.URI
+import Network.URI.Lens
 import System.Directory
 import System.FilePath
 import Text.Blaze.Html.Renderer.Utf8 (renderHtml)
@@ -117,12 +118,13 @@ build page page404 = do
       Nothing -> throwError . AtomMissingAtomURIException $ MissingAtomURIException -- no Monoid for URI -- is that right?
   -- atomTitle' <- view $ siteType . atomTitle
   -- Clear us out, Jim
-  let siteDir = ".sites" </> T.unpack (NE.getNonEmpty slug') <> "/"
+  let slugDir = T.unpack (NE.getNonEmpty slug')
+  let siteDir = ".sites" </> slugDir <> "/"
   traverse_ (liftIO . removePathForcibly . (siteDir <>)) [
     "post",
     "tag"
     ]
-  (sortedPosts, renderedPosts) <- buildMD ("posts" </> T.unpack (NE.getNonEmpty slug'))
+  (sortedPosts, renderedPosts) <- buildMD ("posts" </> slugDir)
   -- By tag
   let grouped = groupByMany (SNE.fromList . BlogTypes.tags . BlogTypes.metadata) sortedPosts :: NEMap BlogTypes.BlogTag (NonEmpty BlogTypes.BlogPost)
   let tags = MNE.keys grouped
@@ -164,7 +166,9 @@ build page page404 = do
     postsRendered <- foldtraverse renderPost posts
     -- TODO: lowercase earlier?
 
-    let relTagUri = fromJust . parseRelativeReference $ "/tag" </> escapeURIString isUnescapedInURIComponent (T.unpack (NE.getNonEmpty (BlogTypes.getTag tag)))
+    let sTag = T.unpack (NE.getNonEmpty (BlogTypes.getTag tag))
+
+    let relTagUri = fromJust . parseRelativeReference $ "/tag" </> escapeURIString isUnescapedInURIComponent sTag
     let relAtomUri = fromJust . parseRelativeReference $ "/atom.xml"
     let tagUri' = relTagUri `relativeTo` baseUrl'
     let tagAtomUri' = relAtomUri `relativeTo` tagUri'
@@ -175,21 +179,26 @@ build page page404 = do
     let atomPrefixer = (atomPrefix <>)
     let fullAtomTitle' = atomPrefixer title'
 
-    let atomTagFilename = "tag" </> T.unpack (NE.getNonEmpty (BlogTypes.getTag tag)) </> "atom.xml"
+    let atomTagFilename = "tag" </> sTag </> "atom.xml"
     let fullAtomTagFilename = ".sites" </> T.unpack (NE.getNonEmpty slug') </> atomTagFilename
-    let tagFilename = "tag" </> T.unpack (NE.getNonEmpty (BlogTypes.getTag tag)) </> "index.html"
+    let tagFilename = "tag" </> sTag </> "index.html"
     let fullTagFilename = siteDir <> tagFilename
     let dirname = dropFileName fullTagFilename
 
     pageTag <- locally title atomPrefixer .
       locally (siteType . atomTitle) atomPrefixer .
       local (set (siteType . atomUrl) tagAtomUri') .
+      local (\w -> w {
+        _previewImgUrl = fromMaybe (w ^. previewImgUrl) (flip relativeTo <$> Just baseUrl' <*> parseRelativeReference ("img/tag/" <> sTag <> "/embed.png"))
+      }) .
       addBreadcrumb atomDesc $
       page (makeLinks Nothing (NE.trustedNonEmpty "#") atomDesc posts) (makeTags (Just tag) tags) postsRendered --  (("Posts tagged with " <> BlogTypes.getTag tag <> ": ") <>)
 
     mkdirp dirname
 
     liftIO . BS.writeFile fullTagFilename . BS.toStrict . renderHtml $ pageTag
+
+    saveScreenshotIfNotExistsForOEmbed (over (uriAuthorityLens . mapped . uriRegNameLens) ("dev." <>) tagUri') (siteDir </> "img/tag/" <> sTag <> "/embed.png") -- relTagUri already starts with /
     
     -- TODO redirect here
     for_ (ws ^. redirectSlugs) $ \redirectSlug -> do
@@ -232,7 +241,7 @@ build page page404 = do
       let filename = "post" <> alias </> "index.html"
       let fullFilename = siteDir </> filename
       let dirname = dropFileName fullFilename
-      let aliasSuffix = fromJust . parseRelativeReference $ alias
+      let aliasSuffix = fromJust . parseRelativeReference $ "post/" <> alias
       let aliasUrl = aliasSuffix `relativeTo` baseUrl'
       let postTitle = BlogTypes.title . BlogTypes.metadata $ post
       let postTitlePrefix = postTitle <> NE.trustedNonEmpty ": "
@@ -257,10 +266,12 @@ build page page404 = do
         })) .
         local (\w -> w {
           -- we don't override rss title, only page title, this is why they're separate
-          _previewImgUrl = fromMaybe (w ^. previewImgUrl) (BlogTypes.featuredImage . BlogTypes.metadata $ post)
+          _previewImgUrl = fromMaybe (fromMaybe (w ^. previewImgUrl) (flip relativeTo <$> Just baseUrl' <*> parseRelativeReference ("img/post" <> alias <> "/embed.png"))) (BlogTypes.featuredImage . BlogTypes.metadata $ post)
         }) . addBreadcrumb (BlogTypes.title . BlogTypes.metadata $ post) $
         page (makeLinks (Just . BlogTypes.postId $ post) (NE.trustedNonEmpty "/#") (NE.trustedNonEmpty "All Posts") sortedPosts) (makeTags Nothing tags) renderedPost
       liftIO . BS.writeFile fullFilename . BS.toStrict . renderHtml $ pageBlogPost
+
+      saveScreenshotIfNotExistsForOEmbed (over (uriAuthorityLens . mapped . uriRegNameLens) ("dev." <>) aliasUrl) (siteDir </> "img" </> dropFileName filename </> "embed.png")
 
       for_ (ws ^. redirectSlugs) $ \redirectSlug -> do
         let redirectFilename = ".sites" </> (T.unpack . NE.getNonEmpty $ redirectSlug) </> filename
@@ -305,3 +316,4 @@ build page page404 = do
       "User-agent: *\nAllow: /\nSitemap: " <> BS.pack (show sitemapUrl') <> "\nContent-Signal: ai-train=no, search=yes, ai-input=no"
     
   make (page (makeLinks Nothing (NE.trustedNonEmpty "#") (NE.trustedNonEmpty "All Posts") sortedPosts) (makeTags Nothing tags) renderedPosts) page404
+  saveScreenshotIfNotExistsForOEmbed (over (uriAuthorityLens . mapped . uriRegNameLens) ("dev." <>) (ws ^. pageUrl)) (siteDir </> "img" </> "embed.png")

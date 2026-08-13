@@ -82,7 +82,7 @@ prodBlogPersonal = Website {
         "debian"
         ],-}
     _description = NE.trustedNonEmpty "The blog of Ember Dart. Includes life-changing observations and scientific breakthroughs, as well as interesting content from around the world.",
-    _previewImgUrl = [relativeReference|/img/preview.png|],
+    _previewImgUrl = [relativeReference|/img/embed.png|],
     _baseUrl = productionUrls ^. urlBlogPersonal,
     _pageUrl = productionUrls ^. urlBlogPersonal,
     _sitemapUrl = [relativeReference|/sitemap.xml|],
@@ -142,7 +142,7 @@ prodPersonal = Website {
         ],
     -}
     _description = NE.trustedNonEmpty "Ember Dart works on a large collection of software and is interested in mathematics, physics, chemistry, radio and linguistics.",
-    _previewImgUrl = [relativeReference|/img/preview.png|],
+    _previewImgUrl = [relativeReference|/img/embed.png|],
     _baseUrl = productionUrls ^. urlPersonal,
     _pageUrl = productionUrls ^. urlPersonal,
     _sitemapUrl = [relativeReference|/sitemap.xml|],
@@ -214,7 +214,7 @@ prodPortfolio = Website {
         "debian"
         ], -}
     _description = NE.trustedNonEmpty "Ember Dart can provide you with all kinds of software engineering including fully-functioning web and phone applications.",
-    _previewImgUrl = [relativeReference|/img/preview.png|],
+    _previewImgUrl = [relativeReference|/img/embed.png|],
     _baseUrl = productionUrls ^. urlPortfolio,
     _pageUrl = productionUrls ^. urlPortfolio,
     _sitemapUrl = [relativeReference|/sitemap.xml|],
@@ -271,7 +271,7 @@ prodBlogTech = Website {
         "debian"
         ], -}
     _description = NE.trustedNonEmpty "JolHarg's blog covers various pieces of technology, code and tutorials to help make your life easier.",
-    _previewImgUrl = [relativeReference|/img/preview.png|],
+    _previewImgUrl = [relativeReference|/img/embed.png|],
     _baseUrl = productionUrls ^. urlBlogTech,
     _pageUrl = productionUrls ^. urlBlogTech,
     _sitemapUrl = [relativeReference|/sitemap.xml|],
@@ -319,7 +319,7 @@ prodHamRadio = Website {
         ]
     -}
     _description = NE.trustedNonEmpty "The M0ORI callsign is owned by Ember Dart located in England. She works on HF and VHF in Exeter.",
-    _previewImgUrl = [relativeReference|/img/preview.png|],
+    _previewImgUrl = [relativeReference|/img/embed.png|],
     _baseUrl = productionUrls ^. urlHamRadio,
     _pageUrl = productionUrls ^. urlHamRadio,
     _sitemapUrl = [relativeReference|/sitemap.xml|],
@@ -336,7 +336,7 @@ prodBlogHamRadio = Website {
     _redirectSlugs = [],
     _title = NE.trustedNonEmpty "The Blog of M0ORI: Interesting Ham Radio Observations",
     _description = NE.trustedNonEmpty "My radio blog covers interesting observations I have had whilst working on ham bands.",
-    _previewImgUrl = [relativeReference|/img/preview.png|],
+    _previewImgUrl = [relativeReference|/img/embed.png|],
     _baseUrl = productionUrls ^. urlBlogHamRadio,
     _pageUrl = productionUrls ^. urlBlogHamRadio,
     _sitemapUrl = [relativeReference|/sitemap.xml|],
@@ -383,7 +383,7 @@ prodReviews = Website {
         ]
     -}
     _description = NE.trustedNonEmpty "Find tech and software reviews with a hackability twist, right here! Requests are accepted and review models are always non-sponsored.",
-    _previewImgUrl = [relativeReference|/img/preview.png|],
+    _previewImgUrl = [relativeReference|/img/embed.png|],
     _baseUrl = productionUrls ^. urlReviews,
     _pageUrl = productionUrls ^. urlReviews,
     _sitemapUrl = [relativeReference|/sitemap.xml|],
