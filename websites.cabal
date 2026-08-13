@@ -1,6 +1,4 @@
 cabal-version:      3.14
-
--- Newer versions complain
 name:               websites
 version:            1.0.0.0
 homepage:           https://github.com/emberdart/websites#readme
@@ -20,7 +18,7 @@ common shared-properties
     ghc-options: -threaded -rtsopts -with-rtsopts=-N
 
   ghc-options:
-    -Weverything -Wno-unsafe -Wno-missing-import-lists
+    -O3 -Werror -Wall -Weverything -Wno-unsafe -Wno-missing-import-lists
     -Wno-missing-export-lists -Wno-implicit-prelude
     -Wno-missing-safe-haskell-mode -Wno-missing-kind-signatures
     -Wno-missing-poly-kind-signatures -Wno-missing-local-signatures
@@ -33,7 +31,7 @@ common shared-properties
 library
   hs-source-dirs:     lib
   ghc-options:
-    -Weverything -Wno-unsafe -Wno-missing-import-lists
+    -O3 -Werror -Wall -Weverything -Wno-unsafe -Wno-missing-import-lists
     -Wno-missing-export-lists -Wno-implicit-prelude
     -Wno-missing-safe-haskell-mode -Wno-missing-kind-signatures
     -Wno-missing-poly-kind-signatures -Wno-missing-local-signatures
@@ -59,6 +57,7 @@ library
     , filepath                ^>=1.5.4
     , frontmatter             ^>=0.1.0.2
     , lens                    ^>=5.3.3
+    , monad-logger            ^>=0.3
     , mtl                     ^>=2.3.1
     , network-uri             ^>=2.6.4.2
     , nonempty-containers     ^>=0.3.4.5
@@ -70,6 +69,7 @@ library
     , sitemap-gen             ^>=0.1
     , text                    ^>=2.1.2
     , time                    ^>=1.16
+    , webdriver               ^>=0.15
 
   -- , dotenv               ^>=0.12
   other-modules:
