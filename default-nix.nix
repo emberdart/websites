@@ -31,13 +31,6 @@ let
       # pandoc = lib.doJailbreak super.pandoc;
       # # not yet here
       # text = self.callHackage "text" "2.1.2" {};
-      # # older version requires older text
-      # # also fails tests for some reason
-      # parsec = lib.dontCheck (self.callHackageDirect {
-      #   pkg = "parsec";
-      #   ver = "3.1.18.0";
-      #   sha256 = "FhFYDHqwEFdr3NBWcdWffLUpNGGA5PeEMtzE3tNIMiE=";
-      # } {});
       # Cabal-syntax = lib.doJailbreak super.Cabal-syntax;
       # dotenv = self.callHackage "dotenv" "0.12.0.0" {};
     };
