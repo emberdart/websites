@@ -72,12 +72,12 @@ make page page404 = do
     page404' <- page404
     pageRedir <- pageRedirect "/"
     liftIO $ do
-      installDirectoryContents silent "static/common" (".sites" </> path')
-      installDirectoryContents silent ("static" </> path') (".sites" </> path')
+      installDirectoryContents (mkVerbosity defaultVerbosityHandles silent) "static/common" (".sites" </> path')
+      installDirectoryContents (mkVerbosity defaultVerbosityHandles silent) ("static" </> path') (".sites" </> path')
       for_ (ws ^. redirectSlugs) $ \redirectSlug -> do
         liftIO . putStrLn $ "Redirection creating in " <> ".sites" </> (T.unpack . NE.getNonEmpty $ redirectSlug)
         -- let redirectDirname = ".sites" </> (T.unpack . NE.getNonEmpty $ redirectSlug)
-        installDirectoryContents silent ("static" </> (T.unpack . NE.getNonEmpty $ redirectSlug)) (".sites" </> (T.unpack . NE.getNonEmpty $ redirectSlug))
+        installDirectoryContents (mkVerbosity defaultVerbosityHandles silent) ("static" </> (T.unpack . NE.getNonEmpty $ redirectSlug)) (".sites" </> (T.unpack . NE.getNonEmpty $ redirectSlug))
         BSL.writeFile (".sites" </> (T.unpack . NE.getNonEmpty $ redirectSlug) </> "index.html") . renderHtml $ pageRedir
         BSL.writeFile (".sites" </> (T.unpack . NE.getNonEmpty $ redirectSlug) </> "404.html") . renderHtml $ pageRedir
       BSL.writeFile (".sites" </> path' </> "index.html") $ renderHtml page'
