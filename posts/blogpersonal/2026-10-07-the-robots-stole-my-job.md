@@ -25,6 +25,12 @@ Terrible news. The robots stole my job. By which I of course mean that I am yet 
 1. **Audio engineering**
 
     One of the things I also enjoy is the process of making and mixing music and audio into a production using some of the tools I have learned to use over the years. It's also something I'd really like a foot in the door in.
+1. **3D modelling**
+
+    I did quite enjoy playing on 3D model packages from quite a while ago, and did find it quite satisfying to refresh my memory of Blender recently. I'm in the middle of a 3D printable boom with the correct holes for a 1300MHz antenna. You knew I did [ham radio](https://m0ori.com), right?  
+1. **Game development**
+
+    It's a bit of an overlap with some of the below, but I have already programmed a couple of game demos, so with more inspiration I would be happy to continue.
 1. **Product manager in a tech company**
 
     The natural step up from what I've mostly been, and about time to do the upgrade, if I'm going to work in a large tech company again, and own the production and delivery of a piece of software. Even though I have been the sole tech person in a team, I have led one commercial product in a large team before, and it seems the logical next step.
