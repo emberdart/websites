@@ -18,7 +18,7 @@ htmlHeader blogPostLinks blogTagLinks blogPosts = do
     pageBlog' <- pageBlog blogPostLinks blogTagLinks blogPosts
     atomXml' <- view $ siteType . atomUrl . to show
     pure . makeHeader "/#blog" "Blog" mempty $ do
-        extNav (stringValue $ show urlPortfolio') "Portfolio"
+        extNav (stringValue $ show urlPortfolio') "Website / App Portfolio"
         pageBlog'
         dlNav (toValue atomXml') "Atom Feed"
         H.style . fromString $ styleToCss haddock

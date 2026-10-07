@@ -29,7 +29,7 @@ linkHamRadio = do
 linkSoftware ∷ (MonadReader Website m) ⇒ m Html
 linkSoftware = do
     urlPortfolio' <- view $ urls . urlPortfolio
-    pure $ extNav (stringValue . show $ urlPortfolio') "Software"
+    pure $ extNav (stringValue . show $ urlPortfolio') "Website / App Portfolio"
 
 linkBlogPersonal ∷ (MonadReader Website m) ⇒ m Html
 linkBlogPersonal = do

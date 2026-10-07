@@ -18,7 +18,7 @@ import Text.Email.Parser
 pagePortfolio ∷ (MonadReader Website m) ⇒ m Html
 pagePortfolio = do
     email' <- view email
-    plainBreadcrumb (NE.trustedNonEmpty "Portfolio") . makePage "portfolio" "Portfolio" customLayout defaultPage $ do
+    plainBreadcrumb (NE.trustedNonEmpty "Website / App Portfolio") . makePage "portfolio" "Website / App Portfolio" customLayout defaultPage $ do
         row . (H.div ! class_ "col-md-12 text-center") $
             p "Some of the websites, projects and companies Ember Dart has been involved with are:"
         row $ do

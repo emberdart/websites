@@ -30,7 +30,7 @@ This will also allow me to more frequently write blog posts, so look forward to 
 Here is the current list of websites that have now been updated:
 
 - [Personal website](https://emberdart.co.uk)
-- [Portfolio](https://jolharg.com)
+- [Website / App Portfolio](https://jolharg.com)
 - [Radio ham website](https://m0ori.com)
 
 And blogs affected:
