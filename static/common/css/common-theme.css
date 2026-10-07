@@ -269,3 +269,7 @@ table tbody tr:hover:nth-child(odd),
 table tbody tr:hover:nth-child(even) {
     background-color: var(--table-bg-color-hover);
 }
+
+strong {
+    font-weight: 900; /* Lexend Deca */
+}
