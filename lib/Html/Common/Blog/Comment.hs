@@ -110,7 +110,7 @@ renderComment ParseCommentResult {
             " "
             a ! href authorUrl' ! A.target "_blank" ! A.rel "noreferrer" $ " (URL)"
             " said on "
-            (a ! href ("#" <> fromString (iso8601Show commentDate))) . fromString $ iso8601Show commentDate
+            fromString $ iso8601Show commentDate
             ":"
         p commentHtml
         br
