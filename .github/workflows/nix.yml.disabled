@@ -21,11 +21,11 @@ jobs:
     - name: Setup Cachix
       uses: cachix/cachix-action@v12
       with:
-        name: dandart
+        name: emberdart
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
     - name: Build
       run: |
         nix-build
     - name: Push to Cachix
       run: |
-        nix-store -qR --include-outputs $(nix-instantiate shell.nix --add-root result/shell --indirect) | cachix push dandart
+        nix-store -qR --include-outputs $(nix-instantiate shell.nix --add-root result/shell --indirect) | cachix push emberdart
