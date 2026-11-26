@@ -7,14 +7,14 @@
     --body-bg-colour: #111; 
     --fg-colour: #ddd;
     --bg-colour: #222;
-    --link-colour: #d0d;
+    --link-colour: rgb(163, 46, 206);
     --card-text-colour: white;
     --card-bg-colour: black;
     --card-box-shadow: 3px 3px 5px #333;
     --bg-nav: black;
     --fg-page: white;
     --bg-page: black;
-    --title-colour: #d0d;
+    --title-colour: rgb(163, 46, 206);
     --blockquote-bg-colour: #111;
     --table-bg-color-odd: #111;
     --table-bg-color-hover: #222;
