@@ -150,7 +150,7 @@ renderPost (BlogPost postId' metadata' html' comments') = do
         -- Not working in Safari yet, so filter
         h1 . fromString . T.unpack . NE.getNonEmpty $ BlogTypes.title metadata'
         small $ do
-            a ! href (fromString . ("/post" <>) . LNE.head . BlogTypes.aliases $ metadata') $ "Permalink"
+            a ! href (fromString . ("/post" <>) . LNE.head . BlogTypes.aliases $ metadata') ! rel "bookmark" $ "Permalink"
             " | Author: "
             a ! href (fromString . T.unpack $ "mailto:" <> TE.decodeUtf8Lenient (toByteString email') <> "?subject=" <> NE.getNonEmpty (BlogTypes.title metadata')) $ "Ember Dart"
             " | Published: "
