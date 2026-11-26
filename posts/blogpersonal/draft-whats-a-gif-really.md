@@ -3,7 +3,7 @@ title: "What's a GIF, really?"
 date: 2024-12-04T12:09:00Z
 draft: true
 aliases: [ "/2026/11/whats-a-gif-really" ]
-tags: []
+tags: [gif]
 ---
 
 Recently I've seen a lot of confusion brought up over what a GIF really is, especially by designers, which is weird, as you'd think they would understand it more than viewers of the format.
