@@ -1,6 +1,6 @@
 cabal-version:      3.14
 name:               websites
-version:            1.0.0.0
+version:            1.0
 homepage:           https://github.com/emberdart/websites#readme
 license:            AGPL-3.0-only
 author:             Ember Dart
@@ -60,11 +60,11 @@ library
     , monad-logger            ^>=0.3
     , mtl                     ^>=2.3.1
     , network-uri             ^>=2.6.4.2
-    , nonempty-containers     ^>=0.4.0.0
+    , nonempty-containers     ^>=0.4
     , nonempty-wrapper        ^>=0.1
     , nonempty-wrapper-aeson  ^>=0.1
     , nonempty-wrapper-text   ^>=0.1
-    , pandoc                  ^>=3.12
+    , pandoc                  ^>=3.14
     , req                     ^>=3.13.4
     , sitemap-gen             ^>=0.1
     , text                    ^>=2.1.2
@@ -164,7 +164,7 @@ executable build
   default-extensions: UnicodeSyntax
   build-depends:
     , base      ^>=4.22
-    , websites  ^>=1.0
+    , websites  ^>=1
 
 test-suite websites-test
   import:             shared-properties
@@ -192,7 +192,7 @@ test-suite websites-test
     , nonempty-wrapper   ^>=0.1
     , text               ^>=2.1.2
     , webdriver          ^>=0.15
-    , websites           ^>=1.0
+    , websites           ^>=1
     , witherable         ^>=0.5
 
   -- , containers           ^>=0.8
@@ -200,7 +200,7 @@ test-suite websites-test
   -- , hspec-expectations ^>=0.8.4
   -- , mtl                  ^>=2.3.1
   -- , process ^>=1.6.25
-  -- , QuickCheck ^>=2.18
+  -- , QuickCheck ^>=2.19
   -- , random ^>=1.3
   -- , vector ^>=0.13.2
   build-tool-depends: hspec-discover:hspec-discover
@@ -216,4 +216,4 @@ benchmark websites-bench
   build-depends:
     , base       ^>=4.22
     , criterion  ^>=1.6.4
-    , websites   ^>=1.0
+    , websites   ^>=1
