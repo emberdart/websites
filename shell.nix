@@ -33,8 +33,7 @@ mkShell rec {
         pkg-config
         libz.dev
         zlib.dev
-        pcre.dev
-    ];
+            ];
     shellHook = ''
         # cabal update >/dev/null
         set -euo pipefail
