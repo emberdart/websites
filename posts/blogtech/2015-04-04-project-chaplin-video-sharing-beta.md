@@ -37,13 +37,13 @@ Channel subscriptions
 Individual profiles
 Audio downloading
 
-Chaplin can be downloaded at [https://github.com/dandart/projectchaplin](https://github.com/dandart/projectchaplin)
+Chaplin can be downloaded at [https://github.com/emberdart/projectchaplin](https://github.com/emberdart/projectchaplin)
 
 Please let me know what you think and if you have any suggestions or can help please let me know!
 
 Credits:
 
-Majority of code: [Ember Dart](https://github.com/dandart/)
+Majority of code: [Ember Dart](https://github.com/emberdart/)
 Majority of design: [Nabil Freeman](https://github.com/nabilfreeman)
 
 Till next time!

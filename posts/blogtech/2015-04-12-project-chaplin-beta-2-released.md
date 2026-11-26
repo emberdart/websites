@@ -15,6 +15,6 @@ Since release beta 1, the following features have been added:
 Search now produces only [CC](https://creativecommons.org/)\-licenced YouTube videos
 Faster loading through use of HTML5 [AppCache](https://www.html5rocks.com/en/tutorials/appcache/beginner/) (where enabled).
 
-The release can be updated [using GitHub](https://github.com/dandart/projectchaplin) or [downloaded as a zip or tar file](https://github.com/dandart/projectchaplin/releases/tag/beta2).
+The release can be updated [using GitHub](https://github.com/emberdart/projectchaplin) or [downloaded as a zip or tar file](https://github.com/emberdart/projectchaplin/releases/tag/beta2).
 
 Please let me know what you think!

@@ -48,10 +48,9 @@ Mobile support via PhoneGap
 The frontend will be programmed in Static HTML + JS - suitable for non-PHP devices
 The backend in PHP, ZF and a NoSQL db
 
-The project is being tracked on Github here: https://github.com/dandart/ShareAV
+The project is being tracked on Github here: https://github.com/emberdart/ShareAV
 
 For anyone who wishes to have input / contribute / help / be awesome can do so in the following ways:
 
 By adding a comment to this blog
-By adding and talking to me on G+ (gplus.to/dandart)
 by emailing me on shareav@emberdart.co.uk
